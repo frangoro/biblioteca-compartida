@@ -1,5 +1,8 @@
 # biblioteca-compartida
 
+# Ejecutar la aplicación
+Desde la carpeta del proyecto ejecutar: npm start
+
 ## Estructura del proyecto
 src/  
 ├── components/       # Componentes reutilizables  
