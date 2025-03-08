@@ -1,7 +1,20 @@
 # biblioteca-compartida
 
-# Ejecutar la aplicación
-Desde la carpeta del proyecto ejecutar: npm start
+Este proyecto fue creado con asistencia de [Perplexity](https://www.perplexity.ai/).
+
+## Scripts Disponibles
+
+En el directorio del proyecto, puedes ejecutar:
+
+### `npm start`
+
+Ejecuta la aplicación en modo de desarrollo.
+
+Abre [http://localhost:3000](http://localhost:3000) para verla en el navegador.
+
+La página se recargará si haces modificaciones.
+
+También verás errores de lint en la consola.
 
 ## Estructura del proyecto
 src/  
