@@ -16,22 +16,57 @@ La página se recargará si haces modificaciones.
 
 También verás errores de lint en la consola.
 
+### `mongosh src/sql/biblioteca-compartida.js`
+
+Genera la base de datos en MongoDB
+
+### `systemctl start mongo.service`
+
+Arranca servidor MongoDB
+
+### `mongosh`
+Acceder a la consola de MongoDB
+### `use biblioteca-compartida`
+Seleccionar la BD
+### `db.user.find()`
+Seleccionar todos los usuarios creados
+
+### `npm run dev`
+
+Arranca el servidor (backend)
+
 ## Estructura del proyecto
-src/  
-├── components/       # Componentes reutilizables  
-│   ├── Button/       # Componente Button  
-│   ├── Header/       # Componente Header  
-│   └── Footer/       # Componente Footer  
+client
+    src/  
+    ├── components/       # Componentes reutilizables  
+    │   ├── Button/       # Componente Button  
+    │   ├── Header/       # Componente Header  
+    │   └── Footer/       # Componente Footer  
 
-├── pages/            # Páginas principales  
-│   ├── Home/         # Página de inicio  
-│   ├── About/        # Página "Acerca de"  
-│   └── Contact/      # Página de contacto  
+    ├── pages/            # Vistas de la aplicación  
+    │   ├── Home/         # Página de inicio
+    │   ├── BookList/     # Página con el listado de libros del usuario
+    │   ├── BookForm/     # Página para dar de alta un nuevo libro 
+    │   ├── /         # Página 
+    │   ├── About/        # Página   
+    │   └── Contact/      # Página de contacto  
 
-├── services/         # Lógica para llamadas a la API  
-│   ├── api.js        # Configuración de la API  
-│   └── auth.js       # Servicio de autenticación  
+    ├── services/         # Lógica para llamadas a la API  
+    │   ├── api.js        # Configuración de la API  
+    │   └── auth.js       # Servicio de autenticación  
 
-├── App.js            # Rutas principales  
+    ├── App.js            # Rutas principales  
 
-├── index.js          # Punto de entrada  
+    ├── index.js          # Punto de entrada  
+server
+    |
+
+## Arquitectura
+### Fronted
+* SPA con React.js
+* Estilos de la UI con Bootstrap
+* Consume la API del backend mediante Fetch
+### Backend
+* Node.js
+* Express.js
+* MongoDB

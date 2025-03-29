@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getBooks, deleteBook } from '../services/mockApiService'; //TODO Cambiar por el servicio real "api"
+import { getBooks, deleteBook } from '../services/api'; //TODO Cambiar por el servicio real "api"
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import axios from 'axios';
 
 const libros = [
   { id: "1", title: "El Principito", author: "Antoine de Saint-Exupéry", status: "Disponible", user: "Fran Gomez" },
@@ -20,7 +20,7 @@ const libros = [
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
-  const [items, setItems] = useState(libros);
+  const [items, setItems] = useState(libros); // parece que hay que meter algo por defecto para que funcione el useEffect, ya que antes de ejecutarse el useEffect parece que renderiza el html donde necesita algo en items.
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ id: "", title: "", author: "" });
 
@@ -47,9 +47,24 @@ const BookList = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    setItems(items.filter(item => item.id !== id));
+  const fetchBooks = async () => {
+    const { data } = await getBooks();
+    console.log(data);
+    setItems(data);
   };
+
+  const handleDelete = async (id) => {
+    await deleteBook(id);
+    fetchBooks();
+  };
+
+  /*const handleDelete = (id) => {
+    setItems(items.filter(item => item.id !== id));
+  };*/
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
 
   return (
     <div className="container mt-5">
@@ -133,20 +148,20 @@ const BookList = () => {
     </div>
   );
 /*
-  useEffect(() => {
-    fetchBooks();
-  }, []);
+  const registerUser = async () => {
+      const response = await axios.post('http://localhost:5000/api/auth/register', {
+          name: "Juan",
+          email: "juan@example.com",
+          password: "123456"
+      });
+      console.log(response.data);
+  };*/
+  
 
-  const fetchBooks = async () => {
-    const { data } = await getBooks();
-    setBooks(data);
-  };
 
-  const handleDelete = async (id) => {
-    await deleteBook(id);
-    fetchBooks();
-  };
 
+
+/*
   return (
     <div>
       <h1>Mis Libros</h1>
