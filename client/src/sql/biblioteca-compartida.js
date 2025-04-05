@@ -7,8 +7,8 @@ console.log("Iniciando script...");
 
 // Definir el esquema y el modelo
 const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
+    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     password: String
 });
 const User = mongoose.model('User', userSchema);
@@ -62,19 +62,19 @@ async function insertarDocumentos() {
         const users = [
             {
                 _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b11'),
-                name: "María García",
+                username: "María García",
                 email: "maria@example.com",
                 password: "$2b$10$EjemploHashSeguro123"
             },
             {
                 _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b22'),
-                name: "Juan López",
+                username: "Juan López",
                 email: "juan@example.com",
                 password: "$2b$10$EjemploHashSeguro456"
             },
             {
                 _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b33'),
-                name: "Ana Martínez",
+                username: "Ana Martínez",
                 email: "ana@example.com",
                 password: "$2b$10$EjemploHashSeguro789"
             }
