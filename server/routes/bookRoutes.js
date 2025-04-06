@@ -16,5 +16,17 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Agregar un libro en la biblioteca del usuario
+router.post('/add', async (req, res) => {
+    try {
+        const { author, category, condition, owner, image, isAvailable} = req.body;
+        const book = new Book({ author, category, condition, owner, image, isAvailable });
+        await book.save();
+        res.json({ message: 'Libro registrado' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 module.exports = router;
