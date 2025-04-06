@@ -1,28 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { getBooks, deleteBook } from '../services/api'; //TODO Cambiar por el servicio real "api"
+import { getBooks, deleteBook, addBook } from '../services/api';
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
-const libros = [
-  { id: "1", title: "El Principito", author: "Antoine de Saint-Exupéry", status: "Disponible", user: "Fran Gomez" },
-  { id: "2", title: "Cien años de soledad", author: "Gabriel García Márquez", status: "Prestado", user: "Ana López" },
-  { id: "3", title: "1984", author: "George Orwell", status: "Disponible", user: "Carlos Ruiz" },
-  { id: "4", title: "Don Quijote de la Mancha", author: "Miguel de Cervantes", status: "Prestado", user: "María García" },
-  { id: "5", title: "Orgullo y prejuicio", author: "Jane Austen", status: "Disponible", user: "Laura Martínez" },
-  { id: "6", title: "Matar a un ruiseñor", author: "Harper Lee", status: "Prestado", user: "Javier Pérez" },
-  { id: "7", title: "El Hobbit", author: "J.R.R. Tolkien", status: "Disponible", user: "Sofía Fernández" },
-  { id: "8", title: "Crónica de una muerte anunciada", author: "Gabriel García Márquez", status: "Prestado", user: "Daniel Gómez" },
-  { id: "9", title: "El Gran Gatsby", author: "F. Scott Fitzgerald", status: "Disponible", user: "Elena Sánchez" },
-  { id: "10", title: "La sombra del viento", author: "Carlos Ruiz Zafón", status: "Prestado", user: "Pedro Díaz" }
-];
-
 
 const BookList = () => {
-  const [books, setBooks] = useState([]);
-  const [items, setItems] = useState(libros); // parece que hay que meter algo por defecto para que funcione el useEffect, ya que antes de ejecutarse el useEffect parece que renderiza el html donde necesita algo en items.
+  const [items, setItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ id: "", title: "", author: "" });
+  const [formData, setFormData] = useState({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "" });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,10 +22,11 @@ const BookList = () => {
       setItems(items.map(item => item.id === formData.id ? formData : item));
     } else {
       // Crear
+      addBook(formData);
       setItems([...items, { ...formData, id: Date.now() }]);
     }
     setShowModal(false);
-    setFormData({ id: "", title: "", author: "" });
+    setFormData({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "" });
   };
 
   const handleEdit = (item) => {
@@ -74,8 +61,9 @@ const BookList = () => {
           <tr>
             <th>Título</th>
             <th>Autor</th>
-            <th>Estado</th>
-            <th>Usuario</th>
+            <th>Categoría</th>
+            <th>Condición</th>
+            <th>Disponibilidad</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -84,8 +72,9 @@ const BookList = () => {
             <tr key={item.id}>
               <td>{item.title}</td>
               <td>{item.author}</td>
-              <td>{item.status}</td>
-              <td>{item.user}</td>
+              <td>{item.category}</td>
+              <td>{item.condition}</td>
+              <td>{item.isAvailable}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEdit(item)}>Editar</Button>
                 <Button variant="danger" onClick={() => handleDelete(item.id)}>Eliminar</Button>
@@ -122,21 +111,48 @@ const BookList = () => {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Estado</Form.Label>
+              <Form.Label>Categoría</Form.Label>
               <Form.Control
                 type="text"
-                name="status"
-                value={formData.status}
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Condición</Form.Label>
+              <Form.Control
+                type="text"
+                name="condition"
+                value={formData.condition}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Usuario</Form.Label> //TODO: rellenar automático
+              <Form.Control
+                type="text"
+                name="owner"
+                value={formData.owner}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Usuario</Form.Label>
+              <Form.Label>Imagen</Form.Label>
               <Form.Control
                 type="text"
-                name="user"
-                value={formData.user}
+                name="image"
+                value={formData.image}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Disponibilidad</Form.Label>
+              <Form.Control
+                type="text"
+                name="isAvailable"
+                value={formData.isAvailable}
                 onChange={handleInputChange}
                 required
               />
