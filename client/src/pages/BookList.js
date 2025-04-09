@@ -2,17 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { getBooks, deleteBook, addBook } from '../services/api';
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
-
 
 const BookList = () => {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]); // lista de libros que se muestran en la tabla
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "" });
+  const [formData, setFormData] = useState({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" }); // campos del formulario de crear/editar libro
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    let parsedValue;
+    if (value === "true") {
+      parsedValue = true;
+    } else if (value === "false") {
+      parsedValue = false;
+    } else {
+      parsedValue = value;
+    }
+    setFormData({ ...formData, [name]: parsedValue });
   };
 
   const handleSubmit = (e) => {
@@ -26,7 +32,7 @@ const BookList = () => {
       setItems([...items, { ...formData, id: Date.now() }]);
     }
     setShowModal(false);
-    setFormData({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "" });
+    setFormData({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" });
   };
 
   const handleEdit = (item) => {
@@ -74,7 +80,7 @@ const BookList = () => {
               <td>{item.author}</td>
               <td>{item.category}</td>
               <td>{item.condition}</td>
-              <td>{item.isAvailable}</td>
+              <td>{item.isAvailable ? 'Disponible' : 'No disponible'}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEdit(item)}>Editar</Button>
                 <Button variant="danger" onClick={() => handleDelete(item.id)}>Eliminar</Button>
@@ -129,16 +135,6 @@ const BookList = () => {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Usuario</Form.Label> //TODO: rellenar automático
-              <Form.Control
-                type="text"
-                name="owner"
-                value={formData.owner}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group>
               <Form.Label>Imagen</Form.Label>
               <Form.Control
                 type="text"
@@ -148,13 +144,24 @@ const BookList = () => {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Disponibilidad</Form.Label>
-              <Form.Control
-                type="text"
+              <Form.Label>Disponibile</Form.Label>
+              <Form.Check
+                type="radio"
+                label="Sí"
                 name="isAvailable"
-                value={formData.isAvailable}
+                value="true"
+                checked={formData.isAvailable === true}
                 onChange={handleInputChange}
-                required
+                inline
+              />
+              <Form.Check
+                type="radio"
+                label="No"
+                name="isAvailable"
+                value="false"
+                checked={formData.isAvailable === false}
+                onChange={handleInputChange}
+                inline
               />
             </Form.Group>
             <Button variant="primary" type="submit">Guardar</Button>
@@ -163,36 +170,6 @@ const BookList = () => {
       </Modal>
     </div>
   );
-/*
-  const registerUser = async () => {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-          name: "Juan",
-          email: "juan@example.com",
-          password: "123456"
-      });
-      console.log(response.data);
-  };*/
-  
-
-
-
-
-/*
-  return (
-    <div>
-      <h1>Mis Libros</h1>
-      <ul>
-        {books.map((book) => (
-          <li key={book._id}>
-            <h3>{book.title}</h3>
-            <p>{book.author}</p>
-            <button onClick={() => handleDelete(book._id)}>Eliminar</button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-  */
 };
 
 export default BookList;
