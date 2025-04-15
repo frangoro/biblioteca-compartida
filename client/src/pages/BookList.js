@@ -151,7 +151,7 @@ const BookList = () => {
                 label="Sí"
                 name="isAvailable"
                 value="true"
-                checked={formData.isAvailable === true}
+                checked={formData.isAvailable === true || formData._id == ""}
                 onChange={handleInputChange}
                 inline
               />
