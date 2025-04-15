@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getBooks, deleteBook, addBook } from '../services/api';
+import { getBooks, deleteBook, addBook, updateBook } from '../services/api';
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const BookList = () => {
   const [items, setItems] = useState([]); // lista de libros que se muestran en la tabla
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" }); // campos del formulario de crear/editar libro
+  const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" }); // campos del formulario de crear/editar libro
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -23,16 +23,17 @@ const BookList = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.id) {
+    if (formData._id) {
       // Actualizar
-      setItems(items.map(item => item.id === formData.id ? formData : item));
+      updateBook(formData._id, formData);
+      setItems(items.map(item => item._id === formData._id ? formData : item));
     } else {
       // Crear
       addBook(formData);
       setItems([...items, { ...formData, id: Date.now() }]);
     }
     setShowModal(false);
-    setFormData({ id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" });
+    setFormData({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" });
   };
 
   const handleEdit = (item) => {
@@ -92,7 +93,7 @@ const BookList = () => {
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{formData.id ? "Editar" : "Agregar"}</Modal.Title>
+          <Modal.Title>{formData._id ? "Editar" : "Agregar"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
