@@ -68,7 +68,7 @@ const BookList = () => {
             <th>Título</th>
             <th>Autor</th>
             <th>Categoría</th>
-            <th>Condición</th>
+            <th>Observaciones</th>
             <th>Disponibilidad</th>
             <th>Acciones</th>
           </tr>
@@ -126,7 +126,7 @@ const BookList = () => {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Condición</Form.Label>
+              <Form.Label>Observaciones</Form.Label>
               <Form.Control
                 type="text"
                 name="condition"
