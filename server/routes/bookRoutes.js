@@ -21,8 +21,8 @@ router.post('/add', async (req, res) => {
     try {
         const { title, author, category, condition, owner, image, isAvailable} = req.body;
         const book = new Book({ title, author, category, condition, owner, image, isAvailable });
-        await book.save();
-        res.json({ message: 'Libro registrado' });
+        const newBook = await book.save();
+        res.json({ message: 'Libro registrado', newBook: newBook});
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

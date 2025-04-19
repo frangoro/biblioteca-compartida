@@ -21,7 +21,7 @@ const BookList = () => {
     setFormData({ ...formData, [name]: parsedValue });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData._id) {
       // Actualizar
@@ -29,11 +29,12 @@ const BookList = () => {
       setItems(items.map(item => item._id === formData._id ? formData : item));
     } else {
       // Crear
-      addBook(formData);
-      setItems([...items, { ...formData, id: Date.now() }]);
+      const res = await addBook(formData); // Crea y devuelve el libro creado
+      setItems([...items, res.data.newBook]); // Añade al listado el nuevo libro con los datos de la BBDD
+  
     }
     setShowModal(false);
-    setFormData({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" });
+    setFormData({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" });
   };
 
   const handleEdit = (item) => {
@@ -43,7 +44,6 @@ const BookList = () => {
 
   const fetchBooks = async () => {
     const { data } = await getBooks();
-    console.log(data);
     setItems(data);
   };
 
@@ -51,10 +51,6 @@ const BookList = () => {
     await deleteBook(id);
     fetchBooks();
   };
-
-  /*const handleDelete = (id) => {
-    setItems(items.filter(item => item.id !== id));
-  };*/
 
   useEffect(() => {
     fetchBooks();
