@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const BookList = () => {
   const [items, setItems] = useState([]); // lista de libros que se muestran en la tabla
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: "", image:"" }); // campos del formulario de crear/editar libro
+  const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" }); // campos del formulario de crear/editar libro
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -76,7 +76,7 @@ const BookList = () => {
         </thead>
         <tbody>
           {items.map(item => (
-            <tr key={item.id}>
+            <tr key={item._id}>
               <td>{item.title}</td>
               <td>{item.author}</td>
               <td>{item.category}</td>
@@ -84,7 +84,7 @@ const BookList = () => {
               <td>{item.isAvailable ? 'Disponible' : 'No disponible'}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEdit(item)}>Editar</Button>
-                <Button variant="danger" onClick={() => handleDelete(item.id)}>Eliminar</Button>
+                <Button variant="danger" onClick={() => handleDelete(item._id)}>Eliminar</Button>
               </td>
             </tr>
           ))}
@@ -151,7 +151,7 @@ const BookList = () => {
                 label="Sí"
                 name="isAvailable"
                 value="true"
-                checked={formData.isAvailable === true || formData._id == ""}
+                checked={formData.isAvailable === true || formData._id === ""}
                 onChange={handleInputChange}
                 inline
               />
