@@ -42,21 +42,17 @@ client
     │   ├── Button/       # Componente Button  
     │   ├── Header/       # Componente Header  
     │   └── Footer/       # Componente Footer  
-
     ├── pages/            # Vistas de la aplicación  
     │   ├── Home/         # Página de inicio
     │   ├── BookList/     # Página con el listado de libros del usuario
     │   ├── BookForm/     # Página para dar de alta un nuevo libro 
-    │   ├── /         # Página 
+    │   ├── /             # Página 
     │   ├── About/        # Página   
     │   └── Contact/      # Página de contacto  
-
     ├── services/         # Lógica para llamadas a la API  
     │   ├── api.js        # Configuración de la API  
     │   └── auth.js       # Servicio de autenticación  
-
     ├── App.js            # Rutas principales  
-
     ├── index.js          # Punto de entrada  
 server
     |
