@@ -4,7 +4,7 @@ Este proyecto fue creado con asistencia de [Perplexity](https://www.perplexity.a
 
 ## Scripts Disponibles
 
-En el directorio del proyecto, puedes ejecutar:
+En el directorio del proyecto, dentro de la carpeta client puedes ejecutar:
 
 ### `npm start`
 
@@ -20,7 +20,7 @@ También verás errores de lint en la consola.
 
 Genera la base de datos en MongoDB
 
-### `systemctl start mongo.service`
+### `systemctl start mongod.service`
 
 Arranca servidor MongoDB
 
@@ -33,7 +33,7 @@ Seleccionar todos los usuarios creados
 
 ### `npm run dev`
 
-Arranca el servidor (backend)
+Arranca el servidor (backend) que está dentro de la carpeta server
 
 ## Estructura del proyecto
 client
