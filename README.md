@@ -46,14 +46,15 @@ client
     │   ├── Home/         # Página de inicio
     │   ├── BookList/     # Página con el listado de libros del usuario
     │   ├── BookForm/     # Página para dar de alta un nuevo libro 
+    │   ├── Users/        # Página gestión de usuarios
     │   ├── /             # Página 
     │   ├── About/        # Página   
     │   └── Contact/      # Página de contacto  
-    ├── services/         # Lógica para llamadas a la API  
-    │   ├── api.js        # Configuración de la API  
+    ├── services/         # Servicios utilizados en el lado servidor  
+    │   ├── api.js        # Configuración de comunicación con la API del servidor
     │   └── auth.js       # Servicio de autenticación  
-    ├── App.js            # Rutas principales  
-    ├── index.js          # Punto de entrada  
+    ├── App.js            # Componente raiz o principal donde se montan el resto de componentes mediante Routes 
+    ├── index.js          # Punto de entrada a la aplicación desde donde se llama a App.js 
 server
     |
 
