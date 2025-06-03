@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { getBooks, deleteBook, addBook, updateBook } from '../services/api';
 import { Button, Table, Modal, Form } from "react-bootstrap";
+import Buscador from '../components/Buscador';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const BookList = () => {
   const [items, setItems] = useState([]); // lista de libros que se muestran en la tabla
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" }); // campos del formulario de crear/editar libro
-
+  const [filtro, setFiltro] = useState('');
+  const categorias = [...new Set(items.map(item => item.category))];
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let parsedValue;
@@ -58,6 +62,12 @@ const BookList = () => {
 
   return (
     <div className="container mt-5">
+      <Buscador 
+              setFiltro={setFiltro} 
+              categorias={categorias} 
+              setCategoriaSeleccionada={setCategoriaSeleccionada}
+              categoriaSeleccionada={categoriaSeleccionada}
+            />
       <Button variant="primary" onClick={() => setShowModal(true)}>Agregar</Button>
       <Table striped bordered hover className="mt-3">
         <thead>
