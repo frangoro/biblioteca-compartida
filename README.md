@@ -4,11 +4,30 @@ Este proyecto fue creado con asistencia de [Perplexity](https://www.perplexity.a
 
 ## Scripts Disponibles
 
-En el directorio del proyecto, dentro de la carpeta client puedes ejecutar:
+### Genera la base de datos en MongoDB
 
-### `npm start`
+* `mongosh src/sql/biblioteca-compartida.js`
+La primera vez puedes cargar la base de datos
 
+### Arranca servidor MongoDB
+
+* `systemctl start mongod.service`
+
+* `mongosh`
+Acceder a la consola de MongoDB
+* `use biblioteca-compartida`
+Seleccionar la BD
+* `db.user.find()`
+Seleccionar todos los usuarios creados
+
+### Arranca el servidor (backend). Está dentro de la carpeta server
+
+* `npm run dev`
 Ejecuta la aplicación en modo de desarrollo.
+
+### Arranca el cliente. Está dentro de la carpeta client
+
+* `npm start`
 
 Abre [http://localhost:3000](http://localhost:3000) para verla en el navegador.
 
@@ -16,24 +35,6 @@ La página se recargará si haces modificaciones.
 
 También verás errores de lint en la consola.
 
-### `mongosh src/sql/biblioteca-compartida.js`
-
-Genera la base de datos en MongoDB
-
-### `systemctl start mongod.service`
-
-Arranca servidor MongoDB
-
-### `mongosh`
-Acceder a la consola de MongoDB
-### `use biblioteca-compartida`
-Seleccionar la BD
-### `db.user.find()`
-Seleccionar todos los usuarios creados
-
-### `npm run dev`
-
-Arranca el servidor (backend) que está dentro de la carpeta server
 
 ## Estructura del proyecto
 client
@@ -56,9 +57,13 @@ client
     ├── App.js            # Componente raiz o principal donde se montan el resto de componentes mediante Routes 
     ├── index.js          # Punto de entrada a la aplicación desde donde se llama a App.js 
 server
-    |
+    models/               # Modelo de datos con Mongoose
+    routes/               # Rutas en Express.js. Es el controlador que atiende las solicitudes HTTP del cliente.
+    server.js             # Configura el servidor (conexión BD, arranque del servidor, activa rutas)
+    sql/                  # Scripts de BD
 
 ## Arquitectura
+Se usa el stack MERN
 ### Fronted
 * SPA con React.js
 * Estilos de la UI con Bootstrap
