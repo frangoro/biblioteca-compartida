@@ -37,30 +37,29 @@ También verás errores de lint en la consola.
 
 
 ## Estructura del proyecto
-client
-    src/  
-    ├── components/       # Componentes reutilizables  
-    │   ├── Button/       # Componente Button  
-    │   ├── Header/       # Componente Header  
-    │   └── Footer/       # Componente Footer  
-    ├── pages/            # Vistas de la aplicación  
-    │   ├── Home/         # Página de inicio
-    │   ├── BookList/     # Página con el listado de libros del usuario
-    │   ├── BookForm/     # Página para dar de alta un nuevo libro 
-    │   ├── Users/        # Página gestión de usuarios
-    │   ├── /             # Página 
-    │   ├── About/        # Página   
-    │   └── Contact/      # Página de contacto  
-    ├── services/         # Servicios utilizados en el lado servidor  
-    │   ├── api.js        # Configuración de comunicación con la API del servidor
-    │   └── auth.js       # Servicio de autenticación  
-    ├── App.js            # Componente raiz o principal donde se montan el resto de componentes mediante Routes 
-    ├── index.js          # Punto de entrada a la aplicación desde donde se llama a App.js 
-server
-    models/               # Modelo de datos con Mongoose
-    routes/               # Rutas en Express.js. Es el controlador que atiende las solicitudes HTTP del cliente.
-    server.js             # Configura el servidor (conexión BD, arranque del servidor, activa rutas)
-    sql/                  # Scripts de BD
+client/
+├── src/
+│   ├── components/       # Componentes React reutilizables
+│   │   ├── Button/       #   ├── Componente Button
+│   │   ├── Header/       #   ├── Componente Header
+│   │   └── Footer/       #   └── Componente Footer
+│   ├── pages/            # Vistas principales de la aplicación
+│   │   ├── Home/         #   ├── Página de inicio
+│   │   ├── BookList/     #   ├── Página con el listado de libros del usuario
+│   │   ├── BookForm/     #   ├── Página para dar de alta un nuevo libro
+│   │   ├── Users/        #   ├── Página de gestión de usuarios
+│   │   ├── About/        #   ├── Página "Acerca de"
+│   │   └── Contact/      #   └── Página de contacto
+│   ├── services/         # Servicios de comunicación con el backend
+│   │   ├── api.js        #   ├── Configuración de comunicación con la API del servidor
+│   │   └── auth.js       #   └── Servicio de autenticación
+│   ├── App.js            # Componente raíz donde se configuran las rutas y se montan otros componentes
+│   └── index.js          # Punto de entrada principal de la aplicación React
+server/
+├── models/               # Modelos de datos con Mongoose (para interacción con la base de datos)
+├── routes/               # Rutas en Express.js (controladores que atienden las solicitudes HTTP del cliente)
+├── server.js             # Configuración principal del servidor (conexión a DB, arranque, activación de rutas)
+└── sql/                  # Scripts SQL para la base de datos
 
 ## Arquitectura
 Se usa el stack MERN
