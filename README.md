@@ -61,6 +61,24 @@ server/
 ├── server.js             # Configuración principal del servidor (conexión a DB, arranque, activación de rutas)  
 └── sql/                  # Scripts SQL para la base de datos  
 
+## Pantallas
+* Home
+Pantalla de inicio. Muestra directamente el catálogo completo con los libros de todos los usuarios.
+Scroll infinito.
+* Mis libros
+* Mi usuario / Registro
+* Login
+* Gestión usuarios
+* Ver libro
+* Solicitar préstamo
+
+## Componentes
+* Logotipo y marca
+* Título de la pantalla
+* Menú de navegación
+* Herramienta de búsqueda
+* Mosaico de muestra de los últimos libros añadidos
+
 ## Arquitectura
 Se usa el stack MERN
 ### Fronted
