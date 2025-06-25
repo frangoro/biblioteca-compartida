@@ -126,4 +126,37 @@ export const resetMockData = () => {
   ];
 };
 
+// Datos de ejemplo para desarrollo:
+        const data = [
+          {
+            _id: '1',
+            title: 'Cien años de soledad',
+            author: 'Gabriel García Márquez',
+            coverImageUrl: 'https://images.cdn1.buscalibre.com/fit-in/360x360/4c/b7/4cb75d1607ef3f2b604084f932822a1f.jpg',
+            description: 'Una obra maestra de la literatura latinoamericana que narra la historia de la familia Buendía a lo largo de varias generaciones en el mítico pueblo de Macondo.'
+          },
+          {
+            _id: '2',
+            title: '1984',
+            author: 'George Orwell',
+            coverImageUrl: 'https://images.cdn1.buscalibre.com/fit-in/360x360/79/1b/791b5c4621c81ef417ee64ce744ce075.jpg',
+            description: 'Una novela distópica que presenta un futuro donde un régimen totalitario controla cada aspecto de la vida.'
+          },
+          {
+            _id: '3',
+            title: 'El Principito',
+            author: 'Antoine de Saint-Exupéry',
+            coverImageUrl: 'https://images.cdn1.buscalibre.com/fit-in/360x360/c8/1f/c81f33f676f2f010f3c5f59c86431980.jpg',
+            description: 'Una fábula poética y filosófica ilustrada que aborda temas como la soledad, la amistad, el amor y la pérdida.'
+          },
+          {
+            _id: '4',
+            title: 'Don Quijote de la Mancha',
+            author: 'Miguel de Cervantes',
+            coverImageUrl: 'https://images.cdn1.buscalibre.com/fit-in/360x360/4c/b7/4cb75d1607ef3f2b604084f932822a1f.jpg', // Usando una imagen similar para ejemplo
+            description: 'La obra cumbre de la literatura española, un caballero que enloquece leyendo libros de caballerías y sale a buscar aventuras.'
+          }
+          // Añade más libros de ejemplo o carga desde tu API
+        ];
+
 export default api;

@@ -1,0 +1,73 @@
+.book-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.book-card-image {
+  width: 100%;
+  height: 200px; /* Altura fija para las imágenes */
+  object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+  border-bottom: 1px solid #eee;
+}
+
+.book-card-content {
+  padding: 15px;
+  flex-grow: 1; /* Permite que el contenido ocupe el espacio restante */
+  display: flex;
+  flex-direction: column;
+}
+
+.book-card-title {
+  font-size: 1.2em;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.book-card-author {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.book-card-description {
+  font-size: 0.85em;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  /* Limita la descripción a un número de líneas para uniformidad */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Muestra máximo 3 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-card-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+  align-self: flex-start; /* Alinea el botón a la izquierda */
+  margin-top: auto; /* Empuja el botón al final del contenido */
+}
+
+.book-card-button:hover {
+  background-color: #0056b3;
+}
