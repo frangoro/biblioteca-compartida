@@ -6,13 +6,33 @@ const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
 
-// Lista de libros del usuario
+// Búsqueda de libros
 router.get('/', async (req, res) => {
     try {
-        const books = await Book.find();
+        const { searchTerm, authorFilter } = req.query; // Obtener parámetros de consulta
+
+        let query = {}; // Objeto de consulta para MongoDB
+
+        // Criterio de búsqueda por título o descripción (case-insensitive)
+        if (searchTerm) {
+            query.$or = [
+                { title: { $regex: searchTerm, $options: 'i' } }, // 'i' para ignorar mayúsculas/minúsculas
+                { description: { $regex: searchTerm, $options: 'i' } }
+            ];
+        }
+
+        // Criterio de filtrado por autor (case-insensitive)
+        if (authorFilter) {
+            query.author = { $regex: authorFilter, $options: 'i' };
+        }
+
+        // Ejecutar la consulta en la base de datos
+        const books = await Book.find(query);
         res.json(books);
+
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los libros' });
+        console.error('Error al obtener libros:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
     }
 });
 
