@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getBooks, deleteBook, addBook, updateBook } from '../services/api';
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import Buscador from '../components/Buscador';
+import SearchBar from '../components/SearchBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const BookList = () => {
-  const [items, setItems] = useState([]); // lista de libros que se muestran en la tabla
+
+  const [books, setBooks] = useState([]); // lista de libros que se muestran en la tabla
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" }); // campos del formulario de crear/editar libro
   const [filtro, setFiltro] = useState('');
-  const categorias = [...new Set(items.map(item => item.category))];
+  const categorias = [...new Set(books.map(item => item.category))];
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({ searchTerm: '', authorFilter: '' });
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,11 +37,11 @@ const BookList = () => {
     if (formData._id) {
       // Actualizar
       updateBook(formData._id, formData);
-      setItems(items.map(item => item._id === formData._id ? formData : item));
+      setBooks(books.map(item => item._id === formData._id ? formData : item));
     } else {
       // Crear
       const res = await addBook(formData); // Crea y devuelve el libro creado
-      setItems([...items, res.data.newBook]); // Añade al listado el nuevo libro con los datos de la BBDD
+      setBooks([...books, res.data.newBook]); // Añade al listado el nuevo libro con los datos de la BBDD
   
     }
     setShowModal(false);
@@ -48,10 +53,7 @@ const BookList = () => {
     setShowModal(true);
   };
 
-  const fetchBooks = async () => {
-    const { data } = await getBooks();
-    setItems(data);
-  };
+
 
   const handleDelete = async (id) => {
     await deleteBook(id);
@@ -61,6 +63,64 @@ const BookList = () => {
   useEffect(() => {
     fetchBooks();
   }, []);
+
+  const fetchBooks = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Construye la URL con parámetros de consulta
+      const queryParams = new URLSearchParams(filters).toString();
+      // En una aplicación real, aquí harías un 'fetch' a tu backend:
+      const response = await fetch(`/api/books?${queryParams}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setBooks(data);
+    } catch (error) {
+      console.error("Error al cargar los libros:", error);
+      setError("No se pudieron cargar los libros. Inténtalo de nuevo más tarde.");
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]); // La función se re-crea solo si 'filters' cambia
+
+  useEffect(() => {
+    fetchBooks();
+  }, [fetchBooks]); // Dispara la carga cuando fetchBooks (y por lo tanto filters) cambie
+
+  const handleSearch = (newFilters) => {
+    setFilters(newFilters); // Actualiza los filtros, lo que disparará useEffect
+  };
+
+    if (loading) {
+    return (
+      <div className="page-wrapper">
+        <Header />
+        <main className="page-content">
+          <div className="container">
+            <p>Cargando libros...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-wrapper">
+        <Header />
+        <main className="page-content">
+          <div className="container">
+            <p className="error-message">{error}</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="page-wrapper">
@@ -74,6 +134,7 @@ const BookList = () => {
                     setCategoriaSeleccionada={setCategoriaSeleccionada}
                     categoriaSeleccionada={categoriaSeleccionada}
                   />
+            <SearchBar onSearch={handleSearch} /> {/* Renderiza la barra de búsqueda */}
             <Button variant="primary" onClick={() => setShowModal(true)}>Agregar</Button>
             <Table striped bordered hover className="mt-3">
               <thead>
@@ -87,7 +148,7 @@ const BookList = () => {
                 </tr>
               </thead>
               <tbody>
-                {items.map(item => (
+                {books.map(item => (
                   <tr key={item._id}>
                     <td>{item.title}</td>
                     <td>{item.author}</td>
