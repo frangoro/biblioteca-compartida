@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/BookCard.css'; // Estilos para la tarjeta
 
 function BookCard({ book }) {
@@ -7,7 +8,7 @@ function BookCard({ book }) {
     return null; // O un placeholder si prefieres
   }
 
-  const { title, author, coverImageUrl, description } = book;
+  const { _id, title, author, coverImageUrl, description } = book;
 
   return (
     <div className="book-card">
@@ -17,7 +18,9 @@ function BookCard({ book }) {
         <p className="book-card-author">Autor: {author}</p>
         <p className="book-card-description">{description}</p>
         {/* Puedes añadir más detalles aquí como género, disponibilidad, etc. */}
-        <button className="book-card-button">Ver Detalles</button>
+        <Link to={`/books/${_id}`} className="book-card-button">
+          Ver Detalles
+        </Link>
       </div>
     </div>
   );

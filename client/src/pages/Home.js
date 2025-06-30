@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookCard from '../components/BookCard'; 
-import SearchBar from '../components/SearchBar';
+import SearchBar from '../components/SearchBar'; 
 import '../styles/Home.css';
 
 
