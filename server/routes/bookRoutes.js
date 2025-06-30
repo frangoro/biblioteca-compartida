@@ -36,6 +36,27 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Detalles del libro
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const book = await Book.findById(id);
+        if (!book) {
+            return res.status(404).json({ message: 'Libro no encontrado' });
+        }
+        res.json(book);
+    } catch (error) {
+        console.error('Error al obtener el libro por ID:', error);
+        // Para IDs inválidos de MongoDB, Mongoose lanza un error de "CastError"
+        if (error.name === 'CastError') {
+        return res.status(400).json({ message: 'ID de libro inválido' });
+        }
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+});
+
+
+
 // Agregar un libro en la biblioteca del usuario
 router.post('/add', async (req, res) => {
     try {

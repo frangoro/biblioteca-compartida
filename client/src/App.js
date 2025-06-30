@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import BookList from './pages/BookList';
 import BookForm from './pages/BookForm';
+import BookDetails from './pages/BookDetails'; 
 import './styles/App.css';
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/myBooks" element={<BookList />} />
         <Route path="/addBook" element={<BookForm onSave={() => window.location = '/'} />} />
         <Route path="/editBook/:id" element={<BookForm onSave={() => window.location = '/'} />} />
+        <Route path="/books/:id" element={<BookDetails />} />
       </Routes>
     </Router>
   );
