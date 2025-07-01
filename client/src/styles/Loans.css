@@ -1,0 +1,106 @@
+.user-loans-page {
+    padding: 20px 0;
+}
+
+.user-loans-page h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.user-loans-page section {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-loans-page section h2 {
+    color: #007bff;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.loan-requests-list,
+.lent-books-list,
+.borrowed-books-list {
+    display: grid;
+    gap: 15px;
+}
+
+.loan-request-item,
+.lent-book-item,
+.borrowed-book-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.loan-request-item p,
+.lent-book-item p,
+.borrowed-book-item p {
+    margin: 0;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.loan-request-item strong {
+    color: #333;
+}
+
+.request-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.approve-button,
+.reject-button,
+.return-button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.approve-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.approve-button:hover {
+    background-color: #218838;
+}
+
+.reject-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.reject-button:hover {
+    background-color: #c82333;
+}
+
+.return-button {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.return-button:hover {
+    background-color: #e0a800;
+}
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+}

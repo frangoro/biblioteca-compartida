@@ -28,11 +28,15 @@ const Book = mongoose.model('Book', bookSchema);
 const loanSchema = new mongoose.Schema({
 book: { type: mongoose.Schema.Types.ObjectId, ref: 'Book' },
 borrower: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-lender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected', 'returned'],
+    default: 'pending'
+  },
 requestDate: Date,
 approvalDate: Date,
-returnDate: Date,
-status: String // "requested", "approved", "rejected", "returned"
+returnDate: Date
 });
 const Loan = mongoose.model('Loan', loanSchema);
 
@@ -132,7 +136,7 @@ async function insertarDocumentos() {
                 _id: new mongoose.Types.ObjectId('aa301a1f4d4b4a001a236d11'),
                 book: books[0]._id,
                 borrower: users[1]._id,
-                lender: users[0]._id,
+                owner: users[0]._id,
                 requestDate: new Date("2024-03-15"),
                 status: "requested"
             },
@@ -140,7 +144,7 @@ async function insertarDocumentos() {
                 _id: new mongoose.Types.ObjectId('aa301a1f4d4b4a001a236d22'),
                 book: books[1]._id,
                 borrower: users[2]._id,
-                lender: users[1]._id,
+                owner: users[1]._id,
                 requestDate: new Date("2024-03-10"),
                 approvalDate: new Date("2024-03-11"),
                 returnDate: new Date("2024-03-18"),
@@ -150,7 +154,7 @@ async function insertarDocumentos() {
                 _id: new mongoose.Types.ObjectId('aa301a1f4d4b4a001a236d33'),
                 book: books[3]._id,
                 borrower: users[0]._id,
-                lender: users[2]._id,
+                owner: users[2]._id,
                 requestDate: new Date("2024-03-14"),
                 approvalDate: new Date("2024-03-14"),
                 status: "approved"

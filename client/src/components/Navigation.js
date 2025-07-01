@@ -7,7 +7,7 @@ function Navigation() {
       <ul>
         <li><Link to="/">Inicio</Link></li>
         <li><Link to="/myBooks">Mis libros</Link></li>
-        <li><Link to="/misPrestamos">Mis préstamos</Link></li>
+        <li><Link to="/loans">Mis préstamos</Link></li>
         <li><Link to="/chat">Chat</Link></li>
         <li><Link to="/miUser">Mi usuario</Link></li>
         <li><Link to="/">Iniciar sesión</Link></li>
