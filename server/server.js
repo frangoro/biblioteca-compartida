@@ -12,15 +12,32 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000' // frontend
+}));
 app.use(morgan('dev'));
 
-// Conectar a MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log('🔥 Conectado a MongoDB'))
-  .catch(err => console.error(err));
+// --- Simulación/placeholder para `req.userId` ---
+// En una aplicación real, este middleware se reemplazaría por tu lógica de autenticación
+// (ej. JWT verification) que establecería `req.userId` después de verificar un token.
+app.use(async (req, res, next) => {
+  // Para pruebas, puedes hardcodear un ID de usuario existente en tu DB:
+  req.userId = '66301a1f4d4b4a001a234b11'; // <-- ¡IMPORTANTE! Reemplaza esto
+
+  // O si tienes un token en la cabecera (ej. Authorization: Bearer <token>)
+  // const authHeader = req.headers.authorization;
+  // if (authHeader && authHeader.startsWith('Bearer ')) {
+  //   const token = authHeader.split(' ')[1];
+  //   try {
+  //     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  //     req.userId = decoded.userId; // Asume que tu JWT decodificado tiene un `userId`
+  //   } catch (error) {
+  //     console.error('Error al verificar token JWT:', error);
+  //     // Opcional: Puedes devolver un 401 si el token es inválido
+  //   }
+  // }
+  next();
+});
 
 // Ruta de prueba
 app.get('/', (req, res) => {
@@ -35,7 +52,19 @@ app.use('/api/books', bookRoutes);
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+// Rutas para las pantallas de gestión de préstamos
+const loanRoutes = require('./routes/loanRoutes');
+app.use('/api/loans', loanRoutes);
+
 //TODO: Rutas para el resto de pantallas
+
+
+// Conectar a MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => console.log('🔥 Conectado a MongoDB'))
+  .catch(err => console.error(err));
 
 // Configurar puerto y escuchar
 const PORT = process.env.PORT || 5000;
