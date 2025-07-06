@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('./client/node_modules/mongoose');
 
 // URL de conexión a MongoDB local
 const uri = 'mongodb://127.0.0.1:27017/biblioteca-compartida';
@@ -9,8 +9,13 @@ console.log("Iniciando script...");
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
-    password: String
-});
+    password: String,
+    role: {
+        type: String,
+        enum: ['user', 'admin'], // Roles posibles
+        default: 'user',        // Rol por defecto
+    }
+},{timestamps: true});
 const User = mongoose.model('User', userSchema);
 
 const bookSchema = new mongoose.Schema({
@@ -48,6 +53,16 @@ async function conectarYInsertar() {
             useUnifiedTopology: true
         });
         console.log('Conexión exitosa');
+        // Eliminar BD
+        await mongoose.connection.db.dropDatabase();
+        console.log('🗑️  Base de datos eliminada');
+        // Cerrar conexión
+        await mongoose.connection.close();
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+    console.log('🔌 Conexión cerrada');
         await insertarDocumentos();
         console.log("Base de datos creada y poblada.");
     } catch (error) {
@@ -65,10 +80,18 @@ async function insertarDocumentos() {
         // users es la colección (tabla) y sus documentos (los 3 objetos que contiene) son los registros
         const users = [
             {
+                _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b10'),
+                username: "admin",
+                email: "frangoro@gmail.com",
+                password: "admin",
+                role: 'admin'
+            },
+            {
                 _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b11'),
                 username: "María García",
                 email: "maria@example.com",
-                password: "$2b$10$EjemploHashSeguro123"
+                password: "$2b$10$EjemploHashSeguro123",
+                role: 'user'
             },
             {
                 _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b22'),
@@ -138,7 +161,7 @@ async function insertarDocumentos() {
                 borrower: users[1]._id,
                 owner: users[0]._id,
                 requestDate: new Date("2024-03-15"),
-                status: "requested"
+                status: "pending"
             },
             {
                 _id: new mongoose.Types.ObjectId('aa301a1f4d4b4a001a236d22'),
