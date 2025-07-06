@@ -6,7 +6,7 @@ Este proyecto fue creado con asistencia de [Perplexity](https://www.perplexity.a
 
 ### Genera la base de datos en MongoDB
 
-* `mongosh src/sql/biblioteca-compartida.js`
+* `mongosh sql/biblioteca-compartida.js`
 La primera vez puedes cargar la base de datos
 
 ### Arranca servidor MongoDB
