@@ -1,7 +1,8 @@
 /**
- * Rutas para la gestión de usuarios.
+ * Endpoints para la autenticación.
+ * Dirigen las peticiones al controlador correspondiente
  * 
- * La he usado como ejemplo TODO: adaptarla a mi aplicación
+ * TODO: La he usado como ejemplo, adaptarla a mi aplicación
  */
 
 const express = require('express');

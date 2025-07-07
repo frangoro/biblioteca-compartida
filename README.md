@@ -57,7 +57,11 @@ client/
 │   └── index.js          # Punto de entrada principal de la aplicación React  
 server/
 ├── models/               # Modelos de datos con Mongoose (para interacción con la base de datos)  
-├── routes/               # Rutas en Express.js (controladores que atienden las solicitudes HTTP del cliente)  
+├── routes/               # Rutas en Express.js (endpoints que atienden las solicitudes HTTP del cliente)  
+├── controllers/
+|   └── userController.js # Lógica de negocio para el módulo de usuarios
+├── middleware/  
+|   └── authMiddleware.js # Autenticación y Autorización
 ├── server.js             # Configuración principal del servidor (conexión a DB, arranque, activación de rutas)  
 └── sql/                  # Scripts SQL para la base de datos  
 
