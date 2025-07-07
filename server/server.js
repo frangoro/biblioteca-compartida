@@ -7,11 +7,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
-// Middleware
+/* Middleware */
+// Middleware para parsear JSON 
 app.use(express.json());
+// Middleware para parsear URL-encoded data
+app.use(express.urlencoded({ extended: false }));
 app.use(cors({
   origin: 'http://localhost:3000' // frontend
 }));
@@ -48,13 +52,16 @@ app.get('/', (req, res) => {
 const bookRoutes = require('./routes/bookRoutes');
 app.use('/api/books', bookRoutes);
 
-// Rutas para las pantallas de gestión de usuarios
+// Rutas para la autenticación de usuarios
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
 // Rutas para las pantallas de gestión de préstamos
 const loanRoutes = require('./routes/loanRoutes');
 app.use('/api/loans', loanRoutes);
+
+// Rutas para la gestión de usuarios
+app.use('/api/users', userRoutes);
 
 //TODO: Rutas para el resto de pantallas
 
