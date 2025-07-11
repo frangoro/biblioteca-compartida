@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { getBooks, deleteBook, addBook, updateBook } from '../services/api';
+import { getBooks, deleteBook, addBook, updateBook, getBooksQuery } from '../services/api';
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import Buscador from '../components/Buscador';
 import SearchBar from '../components/SearchBar';
@@ -70,14 +70,8 @@ const BookList = () => {
     try {
       // Construye la URL con parámetros de consulta
       const queryParams = new URLSearchParams(filters).toString();
-      // En una aplicación real, aquí harías un 'fetch' a tu backend:
-      const response = await fetch(`/api/books?${queryParams}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setBooks(data);
+      const response = await getBooksQuery(queryParams);
+      setBooks(response.data);
     } catch (error) {
       console.error("Error al cargar los libros:", error);
       setError("No se pudieron cargar los libros. Inténtalo de nuevo más tarde.");

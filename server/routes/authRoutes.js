@@ -1,8 +1,5 @@
 /**
  * Endpoints para la autenticación.
- * Dirigen las peticiones al controlador correspondiente
- * 
- * TODO: La he usado como ejemplo, adaptarla a mi aplicación
  */
 
 const express = require('express');
@@ -12,11 +9,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // Registro
-router.post('/register', async (req, res) => {
+router.post('/signup', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { username, email, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ name, email, password: hashedPassword });
+        const user = new User({ username, email, password: hashedPassword });
         await user.save();
         res.json({ message: 'Usuario registrado' });
     } catch (error) {
