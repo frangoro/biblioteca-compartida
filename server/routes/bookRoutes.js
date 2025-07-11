@@ -9,7 +9,7 @@ const Book = require('../models/Book');
 // Búsqueda de libros
 router.get('/', async (req, res) => {
     try {
-        const { searchTerm, authorFilter } = req.query; // Obtener parámetros de consulta
+        const { searchTerm, authorFilter } = req; // Obtener parámetros de consulta
 
         let query = {}; // Objeto de consulta para MongoDB
 

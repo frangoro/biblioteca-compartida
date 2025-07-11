@@ -12,7 +12,7 @@ const {
 } = require('../controllers/userController');
 
 // Importamos los middlewares para proteger las rutas
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, admin } = require('../middelware/authMiddleware');
 
 // Ruta para crear usuarios (puede ser pública o solo para admins)
 // Opción 1: Cualquiera puede registrarse
