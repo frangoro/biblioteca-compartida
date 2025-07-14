@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const userRoutes = require('./routes/userRoutes');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 
@@ -26,20 +27,20 @@ app.use(morgan('dev'));
 // (ej. JWT verification) que establecería `req.userId` después de verificar un token.
 app.use(async (req, res, next) => {
   // Para pruebas, puedes hardcodear un ID de usuario existente en tu DB:
-  req.userId = '66301a1f4d4b4a001a234b11'; // <-- ¡IMPORTANTE! Reemplaza esto
+  //req.userId = '66301a1f4d4b4a001a234b11'; // <-- ¡IMPORTANTE! Reemplaza esto
 
   // O si tienes un token en la cabecera (ej. Authorization: Bearer <token>)
-  // const authHeader = req.headers.authorization;
-  // if (authHeader && authHeader.startsWith('Bearer ')) {
-  //   const token = authHeader.split(' ')[1];
-  //   try {
-  //     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  //     req.userId = decoded.userId; // Asume que tu JWT decodificado tiene un `userId`
-  //   } catch (error) {
-  //     console.error('Error al verificar token JWT:', error);
-  //     // Opcional: Puedes devolver un 401 si el token es inválido
-  //   }
-  // }
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.userId = decoded.userId; // Asume que tu JWT decodificado tiene un `userId`
+    } catch (error) {
+      console.error('Error al verificar token JWT:', error);
+      // Opcional: Puedes devolver un 401 si el token es inválido
+    }
+  }
   next();
 });
 

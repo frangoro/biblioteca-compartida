@@ -13,21 +13,23 @@ import UserListPage from './pages/UserListPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import './styles/App.css';
+import ProtectedRoute from './components/ProtectedRoute';
+// Las rutas envueltas por el componente ProtectedRoute no pueden ser accedidas directamente sin autenticarse. 
 
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/myBooks" element={<BookList />} />
+        <Route path="/myBooks" element={<ProtectedRoute><BookList /></ProtectedRoute>} />
         <Route path="/addBook" element={<BookForm onSave={() => window.location = '/'} />} />
         <Route path="/editBook/:id" element={<BookForm onSave={() => window.location = '/'} />} />
         <Route path="/books/:id" element={<BookDetails />} />
-        <Route path="/loans" element={<Loans />} />
+        <Route path="/loans" element={<ProtectedRoute><Loans /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path='' element={<AdminRoute />}>
-            <Route path='/admin/userlist' element={<UserListPage />} />
+            <Route path='/admin/userlist' element={<ProtectedRoute><UserListPage /></ProtectedRoute>} />
         </Route>
       </Routes>
     </Router>
