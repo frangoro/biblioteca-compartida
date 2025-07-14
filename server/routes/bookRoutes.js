@@ -5,6 +5,8 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
+// Importamos los middlewares para proteger las rutas
+const { protect, admin } = require('../middelware/authMiddleware');
 
 // Búsqueda de libros
 router.get('/', async (req, res) => {
@@ -37,7 +39,7 @@ router.get('/', async (req, res) => {
 });
 
 // Detalles del libro
-router.get('/:id', async (req, res) => {
+router.get('/:id', protect, async (req, res) => {
     try {
         const { id } = req.params;
         const book = await Book.findById(id);
@@ -58,7 +60,7 @@ router.get('/:id', async (req, res) => {
 
 
 // Agregar un libro en la biblioteca del usuario
-router.post('/add', async (req, res) => {
+router.post('/add', protect, async (req, res) => {
     try {
         const { title, author, category, condition, owner, image, isAvailable} = req.body;
         const book = new Book({ title, author, category, condition, owner, image, isAvailable });
@@ -70,7 +72,7 @@ router.post('/add', async (req, res) => {
 });
 
 // Actualizar un libro en la biblioteca del usuario
-router.put('/update/:id', async (req, res) => {
+router.put('/update/:id', protect, async (req, res) => {
     try {
         const { id } = req.params;
         const { title, author, category, condition, owner, image, isAvailable } = req.body;
@@ -91,7 +93,7 @@ router.put('/update/:id', async (req, res) => {
     }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', protect, async (req, res) => {
     try {
         const { id } = req.params;
         const book = await Book.findByIdAndDelete(id);

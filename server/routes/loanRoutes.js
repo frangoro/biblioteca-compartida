@@ -3,12 +3,14 @@ const router = express.Router();
 const Book = require('../models/Book');
 const Loan = require('../models/Loan');
 const User = require('../models/User'); // Necesario para populate
+// Importamos los middlewares para proteger las rutas
+const { protect, admin } = require('../middelware/authMiddleware');
 
 // Middleware de autenticación (ej. para proteger estas rutas)
 // const authMiddleware = require('../middleware/authMiddleware'); // Si tienes uno
 
 // --- GET /api/users/:userId/lent-books ---
-router.get('/:userId/lent-books', async (req, res) => {
+router.get('/:userId/lent-books', protect, async (req, res) => {
   try {
     // Protección de ruta: Asegurarse de que el usuario que consulta sea el mismo que el de la ruta
     // En una app real, `req.userId` vendría de un token JWT después de la autenticación.
@@ -30,7 +32,7 @@ router.get('/:userId/lent-books', async (req, res) => {
 });
 
 // --- GET /api/users/:userId/borrowed-books ---
-router.get('/:userId/borrowed-books', async (req, res) => {
+router.get('/:userId/borrowed-books', protect, async (req, res) => {
   try {
     if (!req.userId || req.params.userId.toString() !== req.userId.toString()) {
       return res.status(403).json({ message: 'Acceso denegado. ID de usuario no coincide.' });
@@ -50,7 +52,7 @@ router.get('/:userId/borrowed-books', async (req, res) => {
 });
 
 // --- GET /api/users/:userId/loan-requests ---
-router.get('/:userId/loan-requests', async (req, res) => {
+router.get('/:userId/loan-requests', protect, async (req, res) => {
   try {
     if (!req.userId || req.params.userId.toString() !== req.userId.toString()) {
       return res.status(403).json({ message: 'Acceso denegado. ID de usuario no coincide.' });
@@ -70,7 +72,7 @@ router.get('/:userId/loan-requests', async (req, res) => {
 });
 
 // --- POST /api/loans (solicitar préstamo) ---
-router.post('/', async (req, res) => { // La ruta base es /api/loans
+router.post('/', protect, async (req, res) => { // La ruta base es /api/loans
   const { bookId } = req.body;
   const borrowerId = req.userId; // El usuario autenticado es el que solicita el préstamo
 
@@ -120,7 +122,7 @@ router.post('/', async (req, res) => { // La ruta base es /api/loans
 });
 
 // --- PUT /api/loans/:loanId/approve ---
-router.put('/:loanId/approve', async (req, res) => {
+router.put('/:loanId/approve', protect, async (req, res) => {
   try {
     const { loanId } = req.params;
     const loan = await Loan.findById(loanId).populate('book');
@@ -150,7 +152,7 @@ router.put('/:loanId/approve', async (req, res) => {
 });
 
 // --- PUT /api/loans/:loanId/reject ---
-router.put('/:loanId/reject', async (req, res) => {
+router.put('/:loanId/reject', protect, async (req, res) => {
   try {
     const { loanId } = req.params;
     const loan = await Loan.findById(loanId).populate('book');
@@ -176,7 +178,7 @@ router.put('/:loanId/reject', async (req, res) => {
 });
 
 // --- PUT /api/loans/:loanId/return ---
-router.put('/:loanId/return', async (req, res) => {
+router.put('/:loanId/return', protect, async (req, res) => {
   try {
     const { loanId } = req.params;
     const loan = await Loan.findById(loanId).populate('book');
