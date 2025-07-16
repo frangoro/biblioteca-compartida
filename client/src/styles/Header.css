@@ -1,0 +1,129 @@
+/* Header Styles */
+
+/* Cabecera */
+.app-header {
+  background-color: #282c34;
+  padding: 20px 0;
+  color: white;
+  text-align: center;
+}
+
+/* Bloque de contenido de la cabecera */
+.app-header .container {
+  display: flex;
+  align-items: center;
+  width: 100%; /* Para que ocupe el espacio y flexbox funcione */
+  flex-direction: column; /* Pone primera fila arriba y segunda fila abajo */
+}
+
+.primera-fila{
+  width: 100%; /* Así flex-direction: column; del contenedor no evita que tome todo el ancho*/
+  align-items: center;
+  display: flex;
+  justify-content: space-between; /* Empuja el h1 a la izquierda y el widget a la derecha */
+  flex-direction:row;
+}
+
+.logo-titulo {
+  display: flex;
+}
+
+.app-logo {
+  height: 40px;
+  margin-right: 15px;
+  vertical-align: middle;
+}
+
+/* Encabezado de la aplicación ("Biblioteca Compartida") */
+.app-header h1 {
+  margin: 0;/* Elimina márgenes por defecto */
+  font-size: 1.8em;
+}
+
+/* Widget de iniciar sesión / registro */
+
+.user-widget .auth-links a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.user-widget .auth-links a:hover {
+  text-decoration: underline;
+}
+
+.user-widget .separator {
+  margin: 0 5px;
+  color: #ccc;
+}
+
+.user-widget .profile-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-widget .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Para hacerla redonda */
+  object-fit: cover;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+}
+
+.user-widget .user-name {
+  font-weight: bold;
+  margin-right: 15px;
+  color: #555;
+}
+
+.user-widget .logout-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.user-widget .logout-button:hover {
+  background-color: #c82333;
+}
+
+/* Icono de perfil */
+.user-widget .profile-icon {
+  font-size: 40px; /* Tamaño del icono */
+  color: #888; /* Color gris suave */
+  margin-right: 10px;
+  /* Puedes añadir más estilos como un borde para simular una foto */
+  border: 1px solid #ddd;
+  border-radius: 50%; /* Si quieres que sea redondo */
+  padding: 5px; /* Para darle un poco de espacio dentro del círculo */
+  background-color: #f0f0f0; /* Fondo del icono */
+}
+
+/* Menú de navegación */
+.main-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+.main-nav ul li {
+  margin: 0 15px;
+}
+
+.main-nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.main-nav ul li a:hover {
+  color: #61dafb;
+}

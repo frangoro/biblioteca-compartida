@@ -1,3 +1,4 @@
+/* Estilos generales de la aplicación */
 .App {
   text-align: center;
 }
@@ -60,51 +61,6 @@ body {
   padding: 0 20px;
 }
 
-/* Header Styles */
-.app-header {
-  background-color: #282c34;
-  padding: 20px 0;
-  color: white;
-  text-align: center;
-}
-
-.app-logo {
-  height: 40px;
-  margin-right: 15px;
-  vertical-align: middle;
-}
-
-.app-header h1 {
-  display: inline-block;
-  margin: 0;
-  vertical-align: middle;
-  font-size: 1.8em;
-}
-
-/* Navigation Styles */
-.main-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 15px 0 0;
-  display: flex;
-  justify-content: center;
-}
-
-.main-nav ul li {
-  margin: 0 15px;
-}
-
-.main-nav ul li a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.main-nav ul li a:hover {
-  color: #61dafb;
-}
-
 /* Main Content Styles */
 .page-content {
   flex-grow: 1; /* Allows content to take up available space */
@@ -112,21 +68,3 @@ body {
   background-color: #f9f9f9;
 }
 
-/* Footer Styles */
-.app-footer {
-  background-color: #333;
-  color: white;
-  padding: 20px 0;
-  text-align: center;
-  font-size: 0.9em;
-}
-
-.footer-links a {
-  color: #61dafb;
-  text-decoration: none;
-  margin: 0 5px;
-}
-
-.footer-links a:hover {
-  text-decoration: underline;
-}
