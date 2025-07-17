@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { loginUserApi } from '../services/api'; 
+import { loginUserApi } from '../services/authService'; 
 
 const Login = () => {
     const { login } = useAuth(); // 👈 Obtén la función de login

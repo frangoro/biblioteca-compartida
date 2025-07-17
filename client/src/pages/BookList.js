@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { getBooks, deleteBook, addBook, updateBook, getBooksQuery } from '../services/api';
+import { getBooks, deleteBook, addBook, updateBook, getBooksQuery } from '../services/bookService';
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import Buscador from '../components/Buscador';
 import SearchBar from '../components/SearchBar';
