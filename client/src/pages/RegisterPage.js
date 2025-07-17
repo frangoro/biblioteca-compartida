@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { registerUserApi } from '../services/api';
+import { registerUserApi } from '../services/authService';
 import '../styles/Login.css';
 
 const RegisterPage = () => {

@@ -14,6 +14,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import './styles/App.css';
 import ProtectedRoute from './components/ProtectedRoute';
+import UserFormPage from './pages/UserFormPage';
 // Las rutas envueltas por el componente ProtectedRoute no pueden ser accedidas directamente sin autenticarse. 
 
 const App = () => {
@@ -29,7 +30,9 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path='' element={<AdminRoute />}>
-            <Route path='/admin/userlist' element={<ProtectedRoute><UserListPage /></ProtectedRoute>} />
+          <Route path='/admin/userlist' element={<ProtectedRoute><UserListPage /></ProtectedRoute>} />
+          <Route path="/admin/users/create" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
+          <Route path="/admin/users/:id/edit" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
         </Route>
       </Routes>
     </Router>

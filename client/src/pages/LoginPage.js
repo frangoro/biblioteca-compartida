@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { loginUserApi } from '../services/api';
+import { loginUserApi } from '../services/authService';
 import '../styles/Login.css';
 
 const LoginPage = () => {

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { readBook } from '../services/api';
-import '../styles/BookDetails.css'; // Asegúrate de crear este archivo CSS
+import { readBook } from '../services/bookService';
+import '../styles/BookDetails.css';
 
 function BookDetails() {
   const { id } = useParams(); // Obtiene el ID del libro de la URL (ej. /books/123)
