@@ -64,7 +64,9 @@ app.use('/api/loans', loanRoutes);
 // Rutas para la gestión de usuarios
 app.use('/api/users', userRoutes);
 
-//TODO: Rutas para el resto de pantallas
+// Ruta para la subida de imágenes a la nube
+const uploadRoutes = require('./routes/uploadRoutes');
+app.use('/api/upload', uploadRoutes);
 
 
 // Conectar a MongoDB

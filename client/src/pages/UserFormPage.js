@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import * as userService from '../services/userService'; // Tu servicio de API
 //import './UserFormPage.css'; //TODO: Para estilos del formulario
 //import 'bootstrap/dist/css/bootstrap.min.css';
+import ProfilePictureUpload from '../components/ProfilePictureUpload';
 
 function UserFormPage() {
   const { id } = useParams(); // Obtiene el ID de la URL si existe (para edición)
@@ -76,6 +77,17 @@ function UserFormPage() {
     }
   };
 
+  const handleProfilePicUploadSuccess = (newUrl) => {
+    // Cuando la foto se suba con éxito, actualiza el estado del usuario en UserFormPage
+    // para que la URL de la foto de perfil del formulario refleje la nueva imagen.
+    setFormData(prevData => ({ ...prevData, profilePicUrl: newUrl }));
+    // También podrías guardar la nueva URL en el localStorage si tienes la info del usuario ahí
+    // const storedUser = JSON.parse(localStorage.getItem('user'));
+    // if (storedUser) {
+    //   localStorage.setItem('user', JSON.stringify({ ...storedUser, profilePicUrl: newUrl }));
+    // }
+  };
+
   if (loading) return <div>Cargando formulario...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
@@ -129,6 +141,13 @@ function UserFormPage() {
             <option value="user">Usuario</option>
             <option value="admin">Administrador</option>
           </select>
+        </div>
+        <div className="form-group">
+        <ProfilePictureUpload
+          userId={id} // El ID del usuario que se está editando
+          currentProfilePicUrl={formData.profilePicUrl} // La URL actual del perfil
+          onUploadSuccess={handleProfilePicUploadSuccess}
+        />
         </div>
         <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}</button>
         <button type="button" onClick={() => navigate('/admin/users')}>Cancelar</button>

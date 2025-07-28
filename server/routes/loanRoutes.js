@@ -4,7 +4,7 @@ const Book = require('../models/Book');
 const Loan = require('../models/Loan');
 const User = require('../models/User'); // Necesario para populate
 // Importamos los middlewares para proteger las rutas
-const { protect, admin } = require('../middelware/authMiddleware');
+const { protect, admin } = require('../middleware/authMiddleware');
 
 // Middleware de autenticación (ej. para proteger estas rutas)
 // const authMiddleware = require('../middleware/authMiddleware'); // Si tienes uno

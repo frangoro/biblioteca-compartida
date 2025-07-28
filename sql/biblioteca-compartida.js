@@ -1,4 +1,4 @@
-const mongoose = require('./client/node_modules/mongoose');
+const mongoose = require('../client/node_modules/mongoose');
 
 // URL de conexión a MongoDB local
 const uri = 'mongodb://127.0.0.1:27017/biblioteca-compartida';
@@ -7,14 +7,34 @@ console.log("Iniciando script...");
 
 // Definir el esquema y el modelo
 const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: String,
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        match: [/.+@.+\..+/, 'Por favor, introduce un email válido'],
+    },    
+    password: {
+        type: String,
+        required: true,
+        minlength: 6,
+    },
     role: {
         type: String,
         enum: ['user', 'admin'], // Roles posibles
         default: 'user',        // Rol por defecto
-    }
+    },
+    profilePicUrl: {
+    type: String,
+    default: 'https://res.cloudinary.com/dpeuvi6qk/image/upload/v1753705325/default_t9xsep.png',
+  },
 },{timestamps: true});
 const User = mongoose.model('User', userSchema);
 
@@ -83,7 +103,7 @@ async function insertarDocumentos() {
                 _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b10'),
                 username: "admin",
                 email: "frangoro@gmail.com",
-                password: "admin",
+                password: "chnageme",
                 role: 'admin'
             },
             {

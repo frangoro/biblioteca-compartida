@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
 // Importamos los middlewares para proteger las rutas
-const { protect, admin } = require('../middelware/authMiddleware');
+const { protect, admin } = require('../middleware/authMiddleware');
 
 // Búsqueda de libros
 router.get('/', async (req, res) => {
