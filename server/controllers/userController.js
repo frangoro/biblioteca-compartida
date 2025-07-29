@@ -10,7 +10,7 @@ const bcrypt = require('bcryptjs');
 // @route   POST /api/users
 // @access  Public
 exports.createUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, role, profilePicUrl } = req.body;
 
     try {
         let user = await User.findOne({ $or: [{ email }, { username }] });
@@ -27,6 +27,8 @@ exports.createUser = async (req, res) => {
             username,
             email,
             password,
+            role,
+            profilePicUrl,
         });
 
         await user.save();
@@ -88,7 +90,7 @@ exports.getUserById = async (req, res) => {
 // @access  Private/Admin o el propio usuario
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
-    const { username, email, password } = req.body;
+    const { username, email, password, role, profilePicUrl } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'ID de usuario inválido' });
@@ -124,6 +126,8 @@ exports.updateUser = async (req, res) => {
             // El pre-save hook se encargará de hashear la nueva contraseña
             user.password = password;
         }
+        user.role = role;
+        user.profilePicUrl = profilePicUrl;
 
         const updatedUser = await user.save();
 

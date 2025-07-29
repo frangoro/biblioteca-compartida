@@ -16,6 +16,7 @@ function UserFormPage() {
     email: '',
     password: '', // Solo para creación o si se permite cambiar en edición
     role: 'user', // Rol por defecto
+    profilePicUrl: '',
   });
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -28,12 +29,13 @@ function UserFormPage() {
       const fetchUser = async () => {
         try {
           setLoading(true);
-          const user = await userService.getUserById(id); // Asume que tienes esta función
+          const user = await userService.getUserById(id);
           setFormData({
             username: user.username,
             email: user.email,
             // No cargar la contraseña por seguridad
             role: user.role,
+            profilePicUrl: user.profilePicUrl || '', // Cargar la URL existente
           });
         } catch (err) {
           setError('Error al cargar los datos del usuario.');
@@ -57,35 +59,40 @@ function UserFormPage() {
     }));
   };
 
+  // Callback que se ejecuta cuando ProfilePictureUpload sube una imagen a Cloudinary
+  const handleProfilePicUploadComplete = (newProfilePicUrl) => {
+    // Aquí es donde actualizamos el estado del formulario principal con la nueva URL
+    setFormData((prevData) => ({
+      ...prevData,
+      profilePicUrl: newProfilePicUrl,
+    }));
+    // No necesitas guardar aquí en la BD, se hará cuando el formulario principal se envíe
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Limpiar errores previos
+    setError(null);
+
+    // Valida que el email es un email válido (si no tienes una librería de validación)
+    if (formData.email && !/.+@.+\..+/.test(formData.email)) {
+      setError('Por favor, introduce un email válido.');
+      return;
+    }
+
     try {
       if (isEditing) {
-        // Llamar a la función updateUser de tu servicio de API
+        // Enviar todos los datos, incluida la `profilePicUrl` que ya está en `formData`
         await userService.updateUser(id, formData);
         alert('Usuario actualizado con éxito!');
       } else {
-        // Llamar a la función createUser de tu servicio de API
         await userService.createUser(formData);
         alert('Usuario creado con éxito!');
       }
       navigate('/admin/userlist'); // Redirigir de vuelta a la lista de usuarios
     } catch (err) {
-      setError('Error al guardar el usuario. Por favor, inténtalo de nuevo.');
-      console.error('Error saving user:', err);
+      console.error('Error saving user:', err.response?.data?.message || err.message || err);
+      setError(err.response?.data?.message || 'Error al guardar el usuario. Por favor, inténtalo de nuevo.');
     }
-  };
-
-  const handleProfilePicUploadSuccess = (newUrl) => {
-    // Cuando la foto se suba con éxito, actualiza el estado del usuario en UserFormPage
-    // para que la URL de la foto de perfil del formulario refleje la nueva imagen.
-    setFormData(prevData => ({ ...prevData, profilePicUrl: newUrl }));
-    // También podrías guardar la nueva URL en el localStorage si tienes la info del usuario ahí
-    // const storedUser = JSON.parse(localStorage.getItem('user'));
-    // if (storedUser) {
-    //   localStorage.setItem('user', JSON.stringify({ ...storedUser, profilePicUrl: newUrl }));
-    // }
   };
 
   if (loading) return <div>Cargando formulario...</div>;
@@ -94,6 +101,7 @@ function UserFormPage() {
   return (
     <div className="user-form-page">
       <h2>{isEditing ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="username">Nombre:</label>
@@ -142,15 +150,16 @@ function UserFormPage() {
             <option value="admin">Administrador</option>
           </select>
         </div>
-        <div className="form-group">
+
         <ProfilePictureUpload
-          userId={id} // El ID del usuario que se está editando
-          currentProfilePicUrl={formData.profilePicUrl} // La URL actual del perfil
-          onUploadSuccess={handleProfilePicUploadSuccess}
+          initialProfilePicUrl={formData.profilePicUrl}
+          onUploadComplete={handleProfilePicUploadComplete}
         />
+
+        <div className="form-actions">
+          <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}</button>
+          <button type="button" onClick={() => navigate('/admin/users')}>Cancelar</button>
         </div>
-        <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}</button>
-        <button type="button" onClick={() => navigate('/admin/users')}>Cancelar</button>
       </form>
     </div>
   );
