@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "name": "Run Script: dev (server)",
+            "request": "launch",
+            "command": "npm run dev",
+            "cwd": "${workspaceFolder}/server"
+        },
+        {
+          "type": "node",
+          "request": "attach",
+          "name": "Attach to Nodemon",
+          "port": 9229, // El puerto por defecto del depurador de Node.js
+          "restart": true, // <--- ESTO ES CLAVE: Permite que el depurador se reconecte
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "${workspaceFolder}",
+          "skipFiles": [
+            "<node_internals>/**" // Para saltarse archivos internos de Node.js
+          ]
+        }
+    ]
+}
