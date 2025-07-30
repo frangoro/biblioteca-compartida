@@ -53,8 +53,20 @@ client/
 │   ├── services/         # Servicios de comunicación con el backend  
 │   │   ├── api.js        #   ├── Configuración de comunicación con la API del servidor  
 │   │   └── auth.js       #   └── Servicio de autenticación  
-│   ├── App.js            # Componente raíz donde se configuran las rutas y se montan otros componentes  
-│   └── index.js          # Punto de entrada principal de la aplicación React  
+│   ├── styles/                          # Estilos globales y utilidades
+│   │   ├── base/                        # Resets, tipografía base, variables
+│   │   │   ├── _reset.css
+│   │   │   ├── _variables.css           # Variables CSS para colores, fuentes, espaciados
+│   │   │   └── _typography.css
+│   │   ├── layouts/                     # Estilos para estructuras principales (header, footer, sidebar)
+│   │   │   └── _main-layout.css
+│   │   ├── components/                  # Estilos genéricos para componentes "puros" (botones, tarjetas)
+│   │   │   └── _buttons.css
+│   │   └── utilities/                   # Clases de ayuda (margen, padding, display)
+│   │       └── _spacing.css
+│   │   ├── App.js            # Componente raíz donde se configuran las rutas y se montan otros componentes  
+│   │   └── index.js          # Punto de entrada principal de la aplicación React  
+│   │   └── index.css         # Importación de los estilos globales de la aplicación
 server/
 ├── models/               # Modelos de datos con Mongoose (para interacción con la base de datos)  
 ├── routes/               # Rutas en Express.js (endpoints que atienden las solicitudes HTTP del cliente)  
@@ -63,7 +75,45 @@ server/
 ├── middleware/  
 |   └── authMiddleware.js # Autenticación y Autorización
 ├── server.js             # Configuración principal del servidor (conexión a DB, arranque, activación de rutas)  
-└── sql/                  # Scripts SQL para la base de datos  
+└── sql/                  # Scripts SQL para la base de datos 
+
+src/
+├── App.js
+├── index.js
+├── styles/                          # Estilos globales y utilidades
+│   ├── base/                        # Resets, tipografía base, variables
+│   │   ├── _reset.css
+│   │   ├── _variables.css           # Variables CSS para colores, fuentes, espaciados
+│   │   └── _typography.css
+│   ├── layouts/                     # Estilos para estructuras principales (header, footer, sidebar)
+│   │   └── _main-layout.css
+│   ├── components/                  # Estilos genéricos para componentes "puros" (botones, tarjetas)
+│   │   └── _buttons.css
+│   └── utilities/                   # Clases de ayuda (margen, padding, display)
+│       └── _spacing.css
+├── components/
+│   ├── UserCard/
+│   │   ├── UserCard.js
+│   │   └── UserCard.module.css      # Estilos específicos del componente UserCard (CSS Modules)
+│   ├── Navbar/
+│   │   ├── Navbar.js
+│   │   └── Navbar.module.css
+│   └── SharedButton/                # Componente de botón reutilizable si no se usa un CSS global de botones
+│       ├── SharedButton.js
+│       └── SharedButton.module.css
+├── pages/
+│   ├── UserListPage/
+│   │   ├── UserListPage.js
+│   │   └── UserListPage.module.css  # Estilos específicos de la página UserListPage
+│   ├── UserFormPage/
+│   │   ├── UserFormPage.js
+│   │   └── UserFormPage.module.css
+│   └── LoginPage/
+│       ├── LoginPage.js
+│       └── LoginPage.module.css
+└── services/
+└── assets/
+    └── images/
 
 ## Pantallas
 * Home

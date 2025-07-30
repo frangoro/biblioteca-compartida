@@ -3,7 +3,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookCard from '../components/BookCard'; 
 import SearchBar from '../components/SearchBar'; 
-import '../styles/Home.css';
+import styles from "./Home.module.css";
+
 
 
 function Home() {
@@ -64,7 +65,7 @@ function Home() {
         <Header />
         <main className="page-content">
           <div className="container">
-            <p className="error-message">{error}</p>
+            <p className={styles['error-message']}>{error}</p>
           </div>
         </main>
         <Footer />
@@ -79,7 +80,7 @@ function Home() {
         <div className="container">
           <h2>Libros de los usuarios</h2>
           <SearchBar onSearch={handleSearch} /> {/* Renderiza la barra de búsqueda */}
-          <div className="book-cards-grid">
+          <div className={styles['book-cards-grid']}>
             {books.length > 0 ? (
               books.map(book => (
                 <BookCard key={book._id} book={book} />

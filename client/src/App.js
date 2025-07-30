@@ -12,7 +12,6 @@ import AdminRoute from './components/AdminRoute';
 import UserListPage from './pages/UserListPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import './styles/App.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserFormPage from './pages/UserFormPage';
 // Las rutas envueltas por el componente ProtectedRoute no pueden ser accedidas directamente sin autenticarse. 

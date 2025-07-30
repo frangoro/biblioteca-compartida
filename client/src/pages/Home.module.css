@@ -1,0 +1,13 @@
+.book-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Columnas responsivas */
+  gap: 20px; /* Espacio entre tarjetas */
+  padding: 20px 0;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+}

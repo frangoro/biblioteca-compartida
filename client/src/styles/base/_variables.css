@@ -1,0 +1,40 @@
+/* CSS Variables */
+:root {
+  /* Colores primarios */
+  --primary-color: #007bff; /* Azul vibrante */
+  --primary-dark: #0056b3;
+  --primary-light: #66b3ff;
+
+  /* Colores secundarios/neutros */
+  --secondary-color: #6c757d; /* Gris */
+  --text-color: #333;
+  --heading-color: #222;
+  --background-color: #f8f9fa;
+  --border-color: #dee2e6;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+
+  /* Espaciados (basados en una escala) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Fuentes */
+  --font-family-body: 'Arial', sans-serif;
+  --font-family-heading: 'Helvetica Neue', sans-serif;
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-lg: 18px;
+  --font-size-h1: 2.5rem;
+  --font-size-h2: 2rem;
+  --line-height-base: 1.6;
+  --font-weight-base: 700;
+
+  /* Bordes y sombras */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --box-shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
