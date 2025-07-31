@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import reportWebVitals from './reportWebVitals';
 import { library } from '@fortawesome/fontawesome-svg-core'; // Importa librería Font Awesome
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons'; // Importa el icono de usuario que queremos
+import './index.css';
 
 // Añade los iconos a la librería global de Font Awesome
 // Esto los hace disponibles para cualquier componente <FontAwesomeIcon>
