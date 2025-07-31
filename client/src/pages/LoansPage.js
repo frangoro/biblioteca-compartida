@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import '../styles/Loans.css';
+import styles from './Loans.module.css'; 
 
 function Loans() {
 
@@ -155,26 +155,26 @@ function Loans() {
   return (
     <div className="page-wrapper">
       <Header />
-      <main className="page-content user-loans-page">
+      <main className={`${styles['user-loans-page']} page-content`}>
         <div className="container">
           <h1>Gestión de Mis Préstamos</h1>
 
           {/* Sección de Solicitudes de Préstamo */}
-          <section className="loan-requests-section">
+          <section>
             <h2>Solicitudes de Préstamo Pendientes ({loanRequests.length})</h2>
             {loanRequests.length === 0 ? (
               <p>No hay solicitudes de préstamo pendientes para tus libros.</p>
             ) : (
-              <div className="loan-requests-list">
+              <div className={styles['loan-requests-list']}>
                 {loanRequests.map(request => (
-                  <div key={request._id} className="loan-request-item">
+                  <div key={request._id} className={styles['loan-request-item']}>
                     {/* Accede a request.book.title y request.borrower.username */}
                     <p>Libro: <strong>{request.book ? request.book.title : 'N/A'}</strong> (de {request.book ? request.book.author : 'N/A'})</p>
                     <p>Solicitado por: {request.borrower ? request.borrower.username : 'N/A'}</p>
                     <p>Fecha de solicitud: {new Date(request.requestDate).toLocaleDateString()}</p>
-                    <div className="request-actions">
-                      <button onClick={() => handleApproveLoan(request._id)} className="approve-button">Aprobar</button>
-                      <button onClick={() => handleRejectLoan(request._id)} className="reject-button">Rechazar</button>
+                    <div className={styles['request-actions']}>
+                      <button onClick={() => handleApproveLoan(request._id)} className={styles['approve-button']}>Aprobar</button>
+                      <button onClick={() => handleRejectLoan(request._id)} className={styles['reject-button']}>Rechazar</button>
                     </div>
                   </div>
                 ))}
@@ -183,14 +183,14 @@ function Loans() {
           </section>
 
           {/* Sección de Libros que he prestado */}
-          <section className="lent-books-section">
+          <section>
             <h2>Libros que he prestado ({lentBooks.length})</h2>
             {lentBooks.length === 0 ? (
               <p>Actualmente no tienes libros prestados a otros usuarios.</p>
             ) : (
-              <div className="lent-books-list">
+              <div className={styles['lent-books-list']}>
                 {lentBooks.map(loan => (
-                  <div key={loan._id} className="lent-book-item">
+                  <div key={loan._id} className={styles['lent-book-item']}>
                     {/* Accede a loan.book.title y loan.borrower.username */}
                     <p>Libro: <strong>{loan.book ? loan.book.title : 'N/A'}</strong> (de {loan.book ? loan.book.author : 'N/A'})</p>
                     <p>Prestado a: {loan.borrower ? loan.borrower.username : 'N/A'}</p>
@@ -203,21 +203,21 @@ function Loans() {
           </section>
 
           {/* Sección de Libros que me han prestado */}
-          <section className="borrowed-books-section">
+          <section>
             <h2>Libros que me han prestado ({borrowedBooks.length})</h2>
             {borrowedBooks.length === 0 ? (
               <p>Actualmente no tienes libros prestados de otros usuarios.</p>
             ) : (
-              <div className="borrowed-books-list">
+              <div className={styles['borrowed-books-list']}>
                 {borrowedBooks.map(loan => (
-                  <div key={loan._id} className="borrowed-book-item">
+                  <div key={loan._id} className={styles['borrowed-book-item']}>
                     {/* Accede a loan.book.title y loan.owner.username */}
                     <p>Libro: <strong>{loan.book ? loan.book.title : 'N/A'}</strong> (de {loan.book ? loan.book.author : 'N/A'})</p>
                     <p>Prestado por: {loan.owner ? loan.owner.username : 'N/A'}</p>
                     <p>Fecha de préstamo: {loan.loanDate ? new Date(loan.loanDate).toLocaleDateString() : 'Pendiente'}</p>
                     <p>Estado: {loan.status}</p>
                     {loan.status === 'approved' && (
-                      <button onClick={() => handleReturnBook(loan._id)} className="return-button">Marcar como devuelto</button>
+                      <button onClick={() => handleReturnBook(loan._id)} className={styles['return-button']}>Marcar como devuelto</button>
                     )}
                   </div>
                 ))}

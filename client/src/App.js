@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import BookList from './pages/BookList';
 import BookForm from './pages/BookForm';
 import BookDetails from './pages/BookDetails'; 
-import Loans from './pages/Loans'; 
+import Loans from './pages/LoansPage'; 
 import AdminRoute from './components/AdminRoute';
 import UserListPage from './pages/UserListPage';
 import LoginPage from './pages/LoginPage';
