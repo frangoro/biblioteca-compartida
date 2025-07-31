@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginUserApi } from '../services/authService';
-import '../styles/Login.css';
+import styles from './Login.module.css';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -37,14 +37,14 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="form-container">
+        <div className={styles['form-container']}>
             <form onSubmit={handleSubmit}>
                 <h2>Iniciar Sesión</h2>
 
-                {fromRegisterMessage && <p className="success-message">{fromRegisterMessage}</p>}
-                {error && <p className="error-message">{error}</p>}
+                {fromRegisterMessage && <p className={styles['success-message']}>{fromRegisterMessage}</p>}
+                {error && <p className={styles['error-message']}>{error}</p>}
 
-                <div className="form-group">
+                <div className={styles['form-group']}>
                     <label htmlFor="email">Email</label>
                     <input
                         type="email"
@@ -54,7 +54,7 @@ const LoginPage = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
+                <div className={styles['form-group']}>
                     <label htmlFor="password">Contraseña</label>
                     <input
                         type="password"
@@ -67,7 +67,7 @@ const LoginPage = () => {
                 <button type="submit" disabled={loading}>
                     {loading ? 'Ingresando...' : 'Iniciar Sesión'}
                 </button>
-                <div className="form-link">
+                <div className={styles['form-link']}>
                     ¿No tienes una cuenta? <Link to="/register">Regístrate</Link>
                 </div>
             </form>

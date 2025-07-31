@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registerUserApi } from '../services/authService';
-import '../styles/Login.css';
+import styles from './Login.module.css';
 
 const RegisterPage = () => {
     const [username, setUsername] = useState('');
@@ -31,13 +31,11 @@ const RegisterPage = () => {
     };
 
     return (
-        <div className="form-container">
+        <div className={styles['form-container']}>
             <form onSubmit={handleSubmit}>
                 <h2>Crear una Cuenta</h2>
-                
-                {error && <p className="error-message">{error}</p>}
-
-                <div className="form-group">
+                {error && <p className={styles['error-message']}>{error}</p>}
+                <div className={styles['form-group']}>
                     <label htmlFor="username">Nombre de Usuario</label>
                     <input
                         type="text"
@@ -47,7 +45,7 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
+                <div className={styles['form-group']}>
                     <label htmlFor="email">Email</label>
                     <input
                         type="email"
@@ -57,7 +55,7 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
-                <div className="form-group">
+                <div className={styles['form-group']}>
                     <label htmlFor="password">Contraseña</label>
                     <input
                         type="password"
@@ -71,7 +69,7 @@ const RegisterPage = () => {
                 <button type="submit" disabled={loading}>
                     {loading ? 'Registrando...' : 'Registrarse'}
                 </button>
-                <div className="form-link">
+                <div className={styles['form-link']}>
                     ¿Ya tienes una cuenta? <Link to="/login">Inicia Sesión</Link>
                 </div>
             </form>
