@@ -1,0 +1,51 @@
+/* Estilo para un botón secundario (por ejemplo, el de cancelar) */
+.secondary-button {
+    background-color: #6c757d; /* Gris */
+    color: white;
+    margin-left: 10px; /* Un poco de espacio si están en la misma línea */
+}
+
+.secondary-button:hover {
+    background-color: #5a6268;
+}
+
+/* Si quieres que los botones en form-actions se alineen bien */
+.form-actions {
+    display: flex;
+    justify-content: space-between; /* O flex-end, o center, según prefieras */
+    gap: 10px; /* Espacio entre los botones */
+    margin-top: 20px;
+}
+
+/* Asegúrate de que los botones en form-actions llenen el espacio si quieres */
+.form-actions button {
+    flex-grow: 1; /* Esto hará que los botones se expandan y tomen el mismo ancho */
+}
+
+/* Estilos para el componente ProfilePictureUpload si no tiene los suyos propios */
+/* Si ProfilePictureUpload.js no usa CSS Modules, puedes añadir estilos aquí */
+/* O si ProfilePictureUpload.js usa CSS Modules, estos estilos irían en su propio ProfilePictureUpload.module.css */
+/* Por ejemplo, si quieres que la imagen de perfil se vea bien dentro del formulario */
+.profile-upload-section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.profile-upload-section img.current-profile-pic {
+    max-width: 150px;
+    height: auto;
+    border-radius: 50%; /* Para hacerla redonda */
+    object-fit: cover;
+    margin: 0 auto 15px auto; /* Centrar y añadir margen inferior */
+    display: block; /* Asegurar que ocupe su propio espacio */
+    border: 2px solid var(--primary-color); /* Un pequeño borde */
+}
+
+.profile-upload-section input[type="file"] {
+    margin-bottom: 10px;
+}

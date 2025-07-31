@@ -4,9 +4,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import * as userService from '../services/userService'; // Tu servicio de API
-//import './UserFormPage.css'; //TODO: Para estilos del formulario
-//import 'bootstrap/dist/css/bootstrap.min.css';
 import ProfilePictureUpload from '../components/ProfilePictureUpload';
+import styles from './UserFormPage.module.css';
 
 function UserFormPage() {
   const { id } = useParams(); // Obtiene el ID de la URL si existe (para edición)
@@ -157,8 +156,8 @@ function UserFormPage() {
         />
 
         <div className="form-actions">
-          <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}</button>
-          <button type="button" onClick={() => navigate('/admin/users')}>Cancelar</button>
+          <button type="submit" className={styles.button}>{isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}</button>
+          <button type="button" className={`${styles.button} ${styles['secondary-button']}`} onClick={() => navigate('/admin/users')}>Cancelar</button>
         </div>
       </form>
     </div>
