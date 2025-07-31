@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { readBook } from '../services/bookService';
-import '../styles/BookDetails.css';
+import styles from './BookDetails.module.css';
 
 function BookDetails() {
   const { id } = useParams(); // Obtiene el ID del libro de la URL (ej. /books/123)
@@ -104,24 +104,23 @@ function BookDetails() {
     <div className="page-wrapper">
       <Header />
       <main className="page-content">
-        <div className="container book-details-container">
-          <div className="book-details-content">
-            <img src={book.coverImageUrl || 'placeholder.jpg'} alt={`Portada de ${book.title}`} className="book-details-image" />
-            <div className="book-details-info">
+        <div className={`container ${styles['book-details-container']}`}>
+          <div className={styles['book-details-content']}>
+            <img src={book.coverImageUrl || 'placeholder.jpg'} alt={`Portada de ${book.title}`} className={styles['book-details-image']} />
+            <div className={styles['book-details-info']}>
               <h1>{book.title}</h1>
-              <p className="book-details-author">Autor: {book.author}</p>
-              <p className="book-details-description">{book.description}</p>
+              <p className={styles['book-details-author']}>Autor: {book.author}</p>
+              <p className={styles['book-details-description']}>{book.description}</p>
               {/* Aquí podrías añadir más detalles: género, ISBN, disponibilidad, etc. */}
-              
               <button
-                className="loan-request-button"
+                className={styles['loan-request-button']}
                 onClick={handleRequestLoan}
                 disabled={loanStatus === 'Cargando...'} // Deshabilita el botón mientras carga
               >
                 {loanStatus === 'Cargando...' ? 'Solicitando...' : 'Solicitar Préstamo'}
               </button>
               {loanStatus && loanStatus !== 'Cargando...' && (
-                <p className={`loan-status-message ${loanStatus.includes('Error') ? 'error' : 'success'}`}>
+                <p className={`${styles['loan-status-message']} ${loanStatus.includes('Error') ? styles['error'] : styles['success']}`}>
                   {loanStatus}
                 </p>
               )}
