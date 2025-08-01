@@ -3,7 +3,6 @@ import { getBooks, deleteBook, addBook, updateBook, getBooksQuery } from '../ser
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import Buscador from '../components/Buscador';
 import SearchBar from '../components/SearchBar';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 

@@ -94,56 +94,69 @@ function UserFormPage() {
     }
   };
 
-  if (loading) return <div>Cargando formulario...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <div className="text-center my-5">Cargando formulario...</div>;
+  if (error) return (
+    <div className="alert alert-danger" role="alert">
+      {error}
+    </div>
+  );
 
   return (
-    <div className="user-form-page">
-      <h2>{isEditing ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
-      {error && <p className="error-message">{error}</p>}
+    <div className="container my-4">
+      <h2 className="mb-4">{isEditing ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
+      
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="username">Nombre:</label>
+        <div className="mb-3">
+          <label htmlFor="username" className="form-label">Nombre:</label>
           <input
             type="text"
             id="username"
             name="username"
             value={formData.username}
             onChange={handleChange}
+            className="form-control" 
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
+        
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">Email:</label>
           <input
             type="email"
             id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
+            className="form-control" 
             required
           />
         </div>
-        {!isEditing && ( // Contraseña solo para creación
-          <div className="form-group">
-            <label htmlFor="password">Contraseña:</label>
+        
+        {!isEditing && ( 
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">Contraseña:</label>
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
+              className="form-control" 
               required
             />
           </div>
         )}
-        <div className="form-group">
-          <label htmlFor="role">Rol:</label>
+        
+        <div className="mb-3">
+          <label htmlFor="role" className="form-label">Rol:</label>
           <select
             id="role"
             name="role"
             value={formData.role}
             onChange={handleChange}
+            className="form-select" 
           >
             <option value="user">Usuario</option>
             <option value="admin">Administrador</option>
@@ -155,13 +168,17 @@ function UserFormPage() {
           onUploadComplete={handleProfilePicUploadComplete}
         />
 
-        <div className="form-actions">
-          <button type="submit" className={styles.button}>{isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}</button>
-          <button type="button" className={`${styles.button} ${styles['secondary-button']}`} onClick={() => navigate('/admin/users')}>Cancelar</button>
+        <div className="d-flex justify-content-end gap-2 mt-4">
+          <button type="submit" className="btn btn-primary">
+            {isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate('/admin/userlist')}>
+            Cancelar
+          </button>
         </div>
       </form>
     </div>
   );
-}
+};
 
 export default UserFormPage;

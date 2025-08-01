@@ -66,38 +66,44 @@ const UserListPage = () => {
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (loading) return <p>Cargando usuarios...</p>;
-    if (error) return <p style={{ color: 'red', fontWeight: 'bold' }}>Error: {error}</p>;
+    if (loading) return <p className="text-center my-5">Cargando usuarios...</p>;
+    
+    // Usamos la clase de alerta de Bootstrap para el mensaje de error
+    if (error) return (
+        <div className="alert alert-danger" role="alert">
+            <p className="mb-0">Error: {error}</p>
+        </div>
+    );
 
     return (
-        <div className="user-list-container"> {/* Contenedor principal con clase para estilos */}
-         <Header />
-            <h1>Administración de Usuarios</h1>
-            
-            <div className="user-list-controls">
-                {/* Botón para crear nuevo usuario */}
-                <button onClick={handleCreateClick} className="create-user-button">
+        <div className="page-wrapper">
+            <Header />
+            <main className="page-content">
+            <div className="container">
+            <div className="container mt-5">
+            <h1 className="my-4">Administración de Usuarios</h1>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <button onClick={handleCreateClick} className="btn btn-primary">
                     Crear Nuevo Usuario
                 </button>
-
-                {/* Barra de búsqueda */}
                 <input
                     type="text"
                     placeholder="Buscar por nombre de usuario o email..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
+                    className="form-control w-50"
                 />
             </div>
 
-            <table className="users-table">
+            {/* Tabla con estilos de Bootstrap */}
+            <table className="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Admin</th>
-                        <th>Acciones</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Admin</th>
+                        <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,11 +114,13 @@ const UserListPage = () => {
                                 <td>{user.username}</td>
                                 <td>{user.email}</td>
                                 <td>{user.role === 'admin' ? 'Sí' : 'No'}</td>
-                                <td className="actions-column">
-                                    <button onClick={() => handleEditClick(user._id)} className="edit-button">
+                                {/* Columna de acciones */}
+                                <td>
+                                    {/* Botones de acción con clases de Bootstrap */}
+                                    <button onClick={() => handleEditClick(user._id)} className="btn btn-warning btn-sm me-2">
                                         Editar
                                     </button>
-                                    <button onClick={() => handleDelete(user._id)} className="delete-button">
+                                    <button onClick={() => handleDelete(user._id)} className="btn btn-danger btn-sm">
                                         Eliminar
                                     </button>
                                 </td>
@@ -120,11 +128,14 @@ const UserListPage = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5">No se encontraron usuarios.</td>
+                            <td colSpan="5" className="text-center">No se encontraron usuarios.</td>
                         </tr>
                     )}
                 </tbody>
             </table>
+                    </div>
+                </div>
+            </main>
             <Footer />
         </div>
     );
