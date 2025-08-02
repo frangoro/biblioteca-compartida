@@ -2,7 +2,7 @@
  * Formulario de creación y edición de usuarios
  */
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import * as userService from '../services/userService';
 import ProfilePictureUpload from '../components/ProfilePictureUpload';
 import { useAuth } from '../context/AuthContext';
@@ -28,11 +28,15 @@ function UserFormPage() {
   const isSelfEditing = userInfo && id === userInfo.id;
   const isAdminEditing = userInfo && userInfo.role === 'admin' && id;
 
+  const location = useLocation();
+  // Lógica para determinar si es una página de creación
+  const isCreatePage = location.pathname === '/admin/users/create';
+
   useEffect(() => {
     // Determinar el ID del usuario a editar
     // Si hay un ID en la URL, es una edición de administrador.
     // Si no, es la edición del perfil del usuario actual.
-    const userIdToEdit = id || userInfo?._id;
+    const userIdToEdit = isCreatePage ? null : id || userInfo?._id;
     if (userIdToEdit) {
       setIsEditing(true);
       // Cargar datos del usuario para edición
@@ -60,7 +64,7 @@ function UserFormPage() {
       setIsEditing(false);
       setLoading(false);
     }
-  }, [id, userInfo]); // Dependencia del ID para re-ejecutar si cambia
+  }, [id, userInfo, isCreatePage]); // Dependencia del ID para re-ejecutar si cambia
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,7 +121,7 @@ function UserFormPage() {
 
   return (
     <div className="container my-4">
-      <h2 className="mb-4">{isEditing ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
+      <h2 className="mb-4">{isEditing && !isCreatePage? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
       
       {error && <div className="alert alert-danger" role="alert">{error}</div>}
       
@@ -148,7 +152,7 @@ function UserFormPage() {
           />
         </div>
         
-        {!isEditing || isSelfEditing && ( 
+        {(!isEditing || isSelfEditing) && ( 
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Contraseña:</label>
             <input
@@ -163,7 +167,7 @@ function UserFormPage() {
           </div>
         )}
         
-        {isAdminEditing && (
+        {(isAdminEditing || isCreatePage) && (
         <div className="mb-3">
           <label htmlFor="role" className="form-label">Rol:</label>
           <select
