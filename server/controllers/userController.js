@@ -11,7 +11,8 @@ const bcrypt = require('bcryptjs');
 // @access  Public
 exports.createUser = async (req, res) => {
     const { username, email, password, role, profilePicUrl } = req.body;
-
+    const hashedPassword = await bcrypt.hash(password, 10);
+console.log(hashedPassword);
     try {
         let user = await User.findOne({ $or: [{ email }, { username }] });
         if (user) {
@@ -22,14 +23,14 @@ exports.createUser = async (req, res) => {
                 return res.status(400).json({ message: 'El nombre de usuario ya está en uso' });
             }
         }
-
         user = new User({
             username,
             email,
-            password,
+            password: hashedPassword,
             role,
             profilePicUrl,
         });
+        console.log(user.password);
 
         await user.save();
 
@@ -68,6 +69,12 @@ exports.getAllUsers = async (req, res) => {
 // @access  Private/Admin o el propio usuario
 exports.getUserById = async (req, res) => {
     const { id } = req.params;
+    const loggedInUserId = req.user.id;
+    const loggedInUserRole = req.user.role;
+    if (loggedInUserRole !== 'admin' && loggedInUserId !== id) {
+        // Si no es admin y no es su propio perfil, rechazar.
+        return res.status(403).json({ message: 'No tienes permiso para editar este usuario.' });
+    }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'ID de usuario inválido' });
@@ -91,6 +98,15 @@ exports.getUserById = async (req, res) => {
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
     const { username, email, password, role, profilePicUrl } = req.body;
+    const loggedInUserId = req.user.id;
+    const loggedInUserRole = req.user.role;
+
+    // Verificación de seguridad:
+    // Solo permitir la edición si el usuario es administrador O si el ID
+    // del usuario autenticado coincide con el ID del usuario a editar.
+    if (loggedInUserRole !== 'admin' && loggedInUserId.toString() !== id) {
+        return res.status(403).json({ message: 'No tienes permiso para editar este usuario.' });
+    }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'ID de usuario inválido' });
@@ -124,7 +140,8 @@ exports.updateUser = async (req, res) => {
                  return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres' });
             }
             // El pre-save hook se encargará de hashear la nueva contraseña
-            user.password = password;
+            const hashedPassword = await bcrypt.hash(password, 10);
+            user.password = hashedPassword;
         }
         user.role = role;
         user.profilePicUrl = profilePicUrl;

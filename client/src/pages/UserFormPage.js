@@ -1,14 +1,16 @@
 /**
  * Formulario de creación y edición de usuarios
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import * as userService from '../services/userService'; // Tu servicio de API
+import * as userService from '../services/userService';
 import ProfilePictureUpload from '../components/ProfilePictureUpload';
+import { useAuth } from '../context/AuthContext';
 import styles from './UserFormPage.module.css';
 
 function UserFormPage() {
   const { id } = useParams(); // Obtiene el ID de la URL si existe (para edición)
+  const { userInfo } = useAuth(); // Usuario actual del contexto
   const navigate = useNavigate(); // Para redirigir después de guardar
   const [formData, setFormData] = useState({
     username: '',
@@ -21,19 +23,28 @@ function UserFormPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Lógica para determinar si un administrador está editando
+  // o si es el propio usuario editando su perfil
+  const isSelfEditing = userInfo && id === userInfo.id;
+  const isAdminEditing = userInfo && userInfo.role === 'admin' && id;
+
   useEffect(() => {
-    if (id) {
+    // Determinar el ID del usuario a editar
+    // Si hay un ID en la URL, es una edición de administrador.
+    // Si no, es la edición del perfil del usuario actual.
+    const userIdToEdit = id || userInfo?._id;
+    if (userIdToEdit) {
       setIsEditing(true);
       // Cargar datos del usuario para edición
       const fetchUser = async () => {
         try {
           setLoading(true);
-          const user = await userService.getUserById(id);
+          const user = await userService.getUserById(userIdToEdit);
           setFormData({
             username: user.username,
             email: user.email,
             // No cargar la contraseña por seguridad
-            role: user.role,
+            role: user.role || 'user',
             profilePicUrl: user.profilePicUrl || '', // Cargar la URL existente
           });
         } catch (err) {
@@ -45,10 +56,11 @@ function UserFormPage() {
       };
       fetchUser();
     } else {
+      // Si no hay ID en la URL y no hay usuario logueado, es una creación (ruta /admin/users/create)
       setIsEditing(false);
       setLoading(false);
     }
-  }, [id]); // Dependencia del ID para re-ejecutar si cambia
+  }, [id, userInfo]); // Dependencia del ID para re-ejecutar si cambia
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,6 +84,8 @@ function UserFormPage() {
     e.preventDefault();
     setError(null);
 
+    const userIdToUpdate = id || userInfo?._id; // Usamos el ID correcto para la llamada a la API
+
     // Valida que el email es un email válido (si no tienes una librería de validación)
     if (formData.email && !/.+@.+\..+/.test(formData.email)) {
       setError('Por favor, introduce un email válido.');
@@ -81,7 +95,7 @@ function UserFormPage() {
     try {
       if (isEditing) {
         // Enviar todos los datos, incluida la `profilePicUrl` que ya está en `formData`
-        await userService.updateUser(id, formData);
+        await userService.updateUser(userIdToUpdate, formData);
         alert('Usuario actualizado con éxito!');
       } else {
         await userService.createUser(formData);
@@ -107,7 +121,7 @@ function UserFormPage() {
       
       {error && <div className="alert alert-danger" role="alert">{error}</div>}
       
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => handleSubmit(e, id || userInfo?.id)}>
         <div className="mb-3">
           <label htmlFor="username" className="form-label">Nombre:</label>
           <input
@@ -134,7 +148,7 @@ function UserFormPage() {
           />
         </div>
         
-        {!isEditing && ( 
+        {!isEditing || isSelfEditing && ( 
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Contraseña:</label>
             <input
@@ -149,6 +163,7 @@ function UserFormPage() {
           </div>
         )}
         
+        {isAdminEditing && (
         <div className="mb-3">
           <label htmlFor="role" className="form-label">Rol:</label>
           <select
@@ -162,6 +177,7 @@ function UserFormPage() {
             <option value="admin">Administrador</option>
           </select>
         </div>
+        )}
 
         <ProfilePictureUpload
           initialProfilePicUrl={formData.profilePicUrl}

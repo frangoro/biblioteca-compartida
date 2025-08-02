@@ -25,8 +25,8 @@ router.route('/')
     .get(protect, admin, getAllUsers); // Solo admins pueden ver todos los usuarios
 
 router.route('/:id')
-    .get(protect, admin, getUserById)      // Solo admins pueden ver cualquier usuario por ID
-    .put(protect, admin, updateUser)       // Solo admins pueden editar cualquier usuario
+    .get(protect, getUserById)      // Solo admins pueden ver cualquier usuario por ID (o usuario actual puede ver su propio perfil)
+    .put(protect, updateUser)       // Solo admins pueden editar cualquier usuario (o usuario actual puede editar su propio perfil)
     .delete(protect, admin, deleteUser);   // Solo admins pueden eliminar cualquier usuario
 
 module.exports = router;
