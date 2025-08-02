@@ -12,8 +12,7 @@ const User = require('../models/User');
 router.post('/signup', async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ username, email, password: hashedPassword });
+        const user = new User({ username, email, password });
         await user.save();
         res.json({ message: 'Usuario registrado' });
     } catch (error) {

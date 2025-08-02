@@ -11,8 +11,6 @@ const bcrypt = require('bcryptjs');
 // @access  Public
 exports.createUser = async (req, res) => {
     const { username, email, password, role, profilePicUrl } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-console.log(hashedPassword);
     try {
         let user = await User.findOne({ $or: [{ email }, { username }] });
         if (user) {
@@ -26,11 +24,10 @@ console.log(hashedPassword);
         user = new User({
             username,
             email,
-            password: hashedPassword,
+            password,
             role,
             profilePicUrl,
         });
-        console.log(user.password);
 
         await user.save();
 
@@ -139,9 +136,7 @@ exports.updateUser = async (req, res) => {
             if (password.length < 6) {
                  return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres' });
             }
-            // El pre-save hook se encargará de hashear la nueva contraseña
-            const hashedPassword = await bcrypt.hash(password, 10);
-            user.password = hashedPassword;
+            user.password = password;
         }
         user.role = role;
         user.profilePicUrl = profilePicUrl;
