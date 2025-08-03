@@ -1,7 +1,7 @@
 /**
  * Formulario de creación y edición de usuarios
  */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import * as userService from '../services/userService';
 import ProfilePictureUpload from '../components/ProfilePictureUpload';
