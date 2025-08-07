@@ -44,7 +44,10 @@ const bookSchema = new mongoose.Schema({
     category: String,
     condition: String, // estado del libro
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    image: String,
+    image: {
+        type: String,
+        default: 'https://res.cloudinary.com/dpeuvi6qk/image/upload/v1753705325/default_t9xsep.png',
+    },
     isAvailable: Boolean,
     createdAt: Date
 });

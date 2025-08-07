@@ -106,7 +106,7 @@ function BookDetails() {
       <main className="page-content">
         <div className={`container ${styles['book-details-container']}`}>
           <div className={styles['book-details-content']}>
-            <img src={book.coverImageUrl || 'placeholder.jpg'} alt={`Portada de ${book.title}`} className={styles['book-details-image']} />
+            <img src={book.image || process.env.REACT_APP_PLACEHOLDER_IMAGE_URL} alt={`Portada de ${book.title}`} className={styles['book-details-image']} />
             <div className={styles['book-details-info']}>
               <h1>{book.title}</h1>
               <p className={styles['book-details-author']}>Autor: {book.author}</p>

@@ -20,7 +20,7 @@ router.get('/:userId/lent-books', protect, async (req, res) => {
 
     // Buscar préstamos donde el 'owner' (dueño del libro) es el usuario logueado
     const loans = await Loan.find({ owner: req.userId, status: { $in: ['approved', 'pending'] } })
-      .populate('book', 'title author coverImageUrl') // Selecciona campos específicos del libro
+      .populate('book', 'title author image') // Selecciona campos específicos del libro
       .populate('borrower', 'username') // Selecciona el username del prestatario
       .exec();
 
@@ -40,7 +40,7 @@ router.get('/:userId/borrowed-books', protect, async (req, res) => {
 
     // Buscar préstamos donde el 'borrower' (prestatario) es el usuario logueado
     const borrowedLoans = await Loan.find({ borrower: req.userId, status: { $in: ['approved', 'pending'] } })
-      .populate('book', 'title author coverImageUrl owner') // Incluye el owner del libro para mostrar "prestado por"
+      .populate('book', 'title author image owner') // Incluye el owner del libro para mostrar "prestado por"
       .populate('owner', 'username') // Popula el username del dueño del libro
       .exec();
 
@@ -60,7 +60,7 @@ router.get('/:userId/loan-requests', protect, async (req, res) => {
 
     // Buscar solicitudes de préstamo pendientes donde el 'owner' del préstamo (dueño del libro) es el usuario logueado
     const requests = await Loan.find({ owner: req.userId, status: 'pending' })
-      .populate('book', 'title author coverImageUrl')
+      .populate('book', 'title author image')
       .populate('borrower', 'username') // Popula el username del prestatario
       .exec();
 
