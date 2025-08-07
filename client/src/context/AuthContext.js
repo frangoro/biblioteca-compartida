@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setUserInfo(null);
         setToken(null);
-        localStorage.removeItem('userInfo');
         localStorage.removeItem('token');
         navigate('/login', { replace: true });
     };
@@ -43,12 +42,9 @@ export const AuthProvider = ({ children }) => {
                     // Si el token aún es válido, cargamos la información del usuario
                     setUserInfo(decodedToken);
                 }
-                const storedUserInfo = localStorage.getItem('userInfo');
 
-                if (storedToken && storedUserInfo) {
-                    setToken(storedToken);
-                    setUserInfo(JSON.parse(storedUserInfo));
-                }
+                setToken(storedToken);
+                
             }
         } catch (error) {
             console.error("Error al cargar la autenticación desde localStorage", error);
@@ -63,11 +59,8 @@ export const AuthProvider = ({ children }) => {
     const login = (userData, userToken) => {
         setUserInfo(userData);
         setToken(userToken);
-        localStorage.setItem('userInfo', JSON.stringify(userData));
         localStorage.setItem('token', userToken);
     };
-
-
 
     // El valor que proveeremos a los componentes hijos
     const value = {
