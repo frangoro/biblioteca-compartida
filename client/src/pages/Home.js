@@ -12,16 +12,17 @@ function Home() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ searchTerm: '', authorFilter: '' });
+  const [filters, setFilters] = useState({ searchTerm: ''});
+  const [filteredBooks, setFilteredBooks] = useState([]);
 
-  // Utilizamos useCallback para memoizar la función y evitar re-creaciones innecesarias
+  // Utilizamos useCallback para memorizar la función y evitar re-creaciones innecesarias
   const fetchBooks = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Construye la URL con parámetros de consulta
+      // Construye la URL con parámetros del filtro de búsqueda que inicialmente es un objeto vacío
+      // con lo que cargará todos los libros
       const queryParams = new URLSearchParams(filters).toString();
-      // En una aplicación real, aquí harías un 'fetch' a tu backend:
       const response = await fetch(`/api/books?${queryParams}`);
 
       if (!response.ok) {
@@ -29,21 +30,34 @@ function Home() {
       }
       const data = await response.json();
       setBooks(data);
+      setFilteredBooks(data); // Inicialmente, todos los libros están filtrados
     } catch (error) {
       console.error("Error al cargar los libros:", error);
       setError("No se pudieron cargar los libros. Inténtalo de nuevo más tarde.");
     } finally {
       setLoading(false);
     }
-  }, [filters]); // La función se re-crea solo si 'filters' cambia
+  }, []);
 
   useEffect(() => {
     fetchBooks();
-  }, [fetchBooks]); // Dispara la carga cuando fetchBooks (y por lo tanto filters) cambie
+  }, []);
 
-  const handleSearch = (newFilters) => {
-    setFilters(newFilters); // Actualiza los filtros, lo que disparará useEffect
-  };
+  // Maneja la búsqueda de libros
+  const handleSearch = ({ searchTerm }) => {
+    // Si el término de búsqueda está vacío, muestra todos los libros
+    if (!searchTerm) {
+        setFilteredBooks(books);
+    } else {
+        // Filtra la lista de libros en base al término de búsqueda
+        console.log(books[0].title);
+        const results = books.filter(book =>
+            book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            book.author.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredBooks(results);
+    }
+};
 
   if (loading) {
     return (
@@ -79,11 +93,11 @@ function Home() {
       <main className="page-content">
         <div className="container">
           <h2>Libros de los usuarios</h2>
-          <SearchBar onSearch={handleSearch} /> {/* Renderiza la barra de búsqueda */}
+          <SearchBar onSearch={handleSearch} />
           <div className={styles['book-cards-grid']}>
             {books.length > 0 ? (
-              books.map(book => (
-                <BookCard key={book._id} book={book} />
+              filteredBooks.map(book => (
+                <BookCard key={book.id} book={book} />
               ))
             ) : (
               <p>No se encontraron libros que coincidan con tu búsqueda.</p>

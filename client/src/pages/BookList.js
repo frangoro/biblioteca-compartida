@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { getBooks, deleteBook, addBook, updateBook, getBooksQuery } from '../services/bookService';
+import { deleteBook, addBook, updateBook, getBooksQuery } from '../services/bookService';
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import Buscador from '../components/Buscador';
 import SearchBar from '../components/SearchBar';
@@ -16,7 +16,7 @@ const BookList = () => {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ searchTerm: '', authorFilter: '' });
+  const [filters, setFilters] = useState({ searchTerm: ''});
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -127,7 +127,7 @@ const BookList = () => {
                     setCategoriaSeleccionada={setCategoriaSeleccionada}
                     categoriaSeleccionada={categoriaSeleccionada}
                   />
-            <SearchBar onSearch={handleSearch} /> {/* Renderiza la barra de búsqueda */}
+            <SearchBar onSearch={handleSearch} />
             <Button variant="primary" onClick={() => setShowModal(true)}>Agregar</Button>
             <Table striped bordered hover className="mt-3">
               <thead>

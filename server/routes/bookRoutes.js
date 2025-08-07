@@ -11,7 +11,7 @@ const { protect, admin } = require('../middleware/authMiddleware');
 // Búsqueda de libros
 router.get('/', async (req, res) => {
     try {
-        const { searchTerm, authorFilter } = req; // Obtener parámetros de consulta
+        const { searchTerm} = req; // Obtener parámetros de consulta
 
         let query = {}; // Objeto de consulta para MongoDB
 
@@ -21,11 +21,6 @@ router.get('/', async (req, res) => {
                 { title: { $regex: searchTerm, $options: 'i' } }, // 'i' para ignorar mayúsculas/minúsculas
                 { description: { $regex: searchTerm, $options: 'i' } }
             ];
-        }
-
-        // Criterio de filtrado por autor (case-insensitive)
-        if (authorFilter) {
-            query.author = { $regex: authorFilter, $options: 'i' };
         }
 
         // Ejecutar la consulta en la base de datos
