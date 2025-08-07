@@ -1,8 +1,7 @@
 /**
  * Renderiza la página correspondiente a la ruta que se está accediendo
  */
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import BookList from './pages/BookList';
 import BookForm from './pages/BookForm';
@@ -14,11 +13,11 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserFormPage from './pages/UserFormPage';
-// Las rutas envueltas por el componente ProtectedRoute no pueden ser accedidas directamente sin autenticarse. 
 
+// Las rutas envueltas por el componente ProtectedRoute no pueden ser accedidas directamente sin autenticarse. 
 const App = () => {
+  
   return (
-    <Router>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/myBooks" element={<ProtectedRoute><BookList /></ProtectedRoute>} />
@@ -40,7 +39,6 @@ const App = () => {
             </ProtectedRoute>
           } />
       </Routes>
-    </Router>
   );
 };
 

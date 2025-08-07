@@ -1,5 +1,6 @@
 /**
- *  Intercerptor de Axios para añadir el token en las llamadas a la API
+ *  Interceptor de Axios para añadir el token en las llamadas a la API
+ *  Se ejecuta antes de cada petición HTTP y después de cada respuesta.
  */ 
 import axios from 'axios';
 
@@ -22,6 +23,28 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Variable para almacenar la función de logout
+let onLogoutCallback = () => {};
+
+// Función para establecer el callback de logout
+export const setLogoutCallback = (callback) => {
+  onLogoutCallback = callback;
+};
+
+// Interceptor de respuesta
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Si la respuesta es un error 401 (No Autorizado)
+    if (error.response?.status === 401) {
+      console.log('Se detectó un 401. Llamando a la función de logout...');
+      // Llama a la función de logout almacenada
+      onLogoutCallback();
+    }
     return Promise.reject(error);
   }
 );

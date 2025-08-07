@@ -2,31 +2,61 @@
  * Contexto y hook para la autenticación de usuarios
  */
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { setLogoutCallback } from '../services/axiosInstance';
 
-// 1. Creamos el contexto
+// Este es el contexto que creamos para la autenticación
 const AuthContext = createContext(null);
 
-// 2. Creamos el componente Proveedor (Provider)
+// Este es el proveedor del contexto que envolverá nuestra aplicación
+// Proporciona el estado de autenticación y las funciones para iniciar y cerrar sesión
+// al resto de componentes de la aplicación.
+// También maneja la carga inicial de datos desde localStorage.
 export const AuthProvider = ({ children }) => {
     const [userInfo, setUserInfo] = useState(null);
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    // Función para cerrar sesión
+    const logout = () => {
+        setUserInfo(null);
+        setToken(null);
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('token');
+        navigate('/login', { replace: true });
+    };
 
     // Efecto para cargar los datos desde localStorage al iniciar la app
     useEffect(() => {
         try {
             const storedToken = localStorage.getItem('token');
-            const storedUserInfo = localStorage.getItem('userInfo');
+            if (storedToken) {
+                const decodedToken = jwtDecode(storedToken);
+                const currentTime = Date.now() / 1000; // Tiempo actual en segundos
+                
+                // Verifica si el token ha caducado
+                if (decodedToken.exp < currentTime) {
+                    logout();
+                } else {
+                    // Si el token aún es válido, cargamos la información del usuario
+                    setUserInfo(decodedToken);
+                }
+                const storedUserInfo = localStorage.getItem('userInfo');
 
-            if (storedToken && storedUserInfo) {
-                setToken(storedToken);
-                setUserInfo(JSON.parse(storedUserInfo));
+                if (storedToken && storedUserInfo) {
+                    setToken(storedToken);
+                    setUserInfo(JSON.parse(storedUserInfo));
+                }
             }
         } catch (error) {
             console.error("Error al cargar la autenticación desde localStorage", error);
+            logout();
         } finally {
             setLoading(false); // Terminamos la carga inicial
         }
+        setLogoutCallback(logout);
     }, []);
 
     // Función para iniciar sesión
@@ -37,13 +67,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', userToken);
     };
 
-    // Función para cerrar sesión
-    const logout = () => {
-        setUserInfo(null);
-        setToken(null);
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('token');
-    };
+
 
     // El valor que proveeremos a los componentes hijos
     const value = {
@@ -51,7 +75,7 @@ export const AuthProvider = ({ children }) => {
         token,
         loading,
         login,
-        logout,
+        logout
     };
 
     return (
@@ -62,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-// 3. Creamos el Hook personalizado para usar el contexto
+// Hook para acceder al contexto de autenticación
 export const useAuth = () => {
     return useContext(AuthContext);
 };
