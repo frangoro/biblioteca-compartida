@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserFormPage from './pages/UserFormPage';
+import ChatPage from './pages/ChatPage';
 
 // Las rutas envueltas por el componente ProtectedRoute no pueden ser accedidas directamente sin autenticarse. 
 const App = () => {
@@ -33,11 +34,19 @@ const App = () => {
           <Route path="/admin/users/:id/edit" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
         </Route>
         {/* Ruta para el usuario actual - NO usa un ID en la URL */}
-          <Route path="/profile" element={
-            <ProtectedRoute> {/* Protege la ruta para que solo los usuarios logueados puedan acceder */}
-              <UserFormPage />
+        <Route path="/profile" element={
+          <ProtectedRoute> {/* Protege la ruta para que solo los usuarios logueados puedan acceder */}
+            <UserFormPage />
+          </ProtectedRoute>
+        } />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <ChatPage />
             </ProtectedRoute>
-          } />
+          }
+        />
       </Routes>
   );
 };
