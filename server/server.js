@@ -47,17 +47,12 @@ app.use('/api/users', userRoutes);
 const uploadRoutes = require('./routes/uploadRoutes');
 app.use('/api/upload', uploadRoutes);
 
-
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => console.log('🔥 Conectado a MongoDB'))
   .catch(err => console.error(err));
-
-// Configurar puerto y escuchar
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));
 
 /* Chat con Socket.IO */
 
@@ -89,6 +84,7 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(5000, () => {
+// Inicia el servidor tanto para HTTP como para Socket.IO
+server.listen(process.env.PORT || 5000, () => {
   console.log('Servidor de chat escuchando en el puerto 5000');
 });
