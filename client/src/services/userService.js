@@ -81,3 +81,17 @@ export const searchUsers = async (searchTerm) => {
   // Suponiendo que tu API acepta un parámetro 'q' para la búsqueda, e.g., /api/users?q=searchTerm
   return await axiosInstance.get(`${API_URL}?q=${encodeURIComponent(searchTerm)}`);
 };
+
+// Función para obtener un usuario por su nombre de usuario
+export const getUserByUsername = async (username) => {
+  try {
+    const response = await axiosInstance.get(`${API_URL}/search/${username}`);
+    return response.data;
+  } catch (error) {
+    // Si el usuario no se encuentra, la API devolverá un 404
+    if (error.response && error.response.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+};

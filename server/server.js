@@ -67,24 +67,63 @@ const io = new Server(server, {
   }
 });
 
+const userSockets = new Map(); // Mapa para guardar el userId y su socket.id
+
 // Escucha por nuevas conexiones de clientes
 io.on('connection', (socket) => {
   console.log('Un usuario se ha conectado:', socket.id);
 
-  // Escucha por un evento de chat
-  socket.on('chat message', (msg) => {
-    console.log('Mensaje recibido:', msg);
-    // Emite el mensaje a todos los clientes conectados
-    io.emit('chat message', msg); 
+  // Escucha el evento 'join' para que el usuario se identifique
+  socket.on('join', (userId) => {
+    userSockets.set(userId, socket.id); // Guarda la relación userId -> socket.id
+    console.log(`Usuario ${userId} se ha unido al chat`);
   });
 
-  // Escucha por desconexiones
+  // Escucha por un evento de chat. Cuando un usuario envía un mensaje privado
+  // busca el socket del destinatario y le envía el mensaje
+  socket.on('private message', ({ toUserId, message }) => {
+    const recipientSocketId = userSockets.get(toUserId);
+
+    if (recipientSocketId) {
+      // Si el destinatario está conectado, le envía el mensaje directamente
+      io.to(recipientSocketId).emit('private message', { fromUserId: socket.id, message });
+      
+      // Opcional: También puedes enviar una confirmación al emisor
+      // socket.emit('message sent', 'Mensaje enviado con éxito');
+    } else {
+      // Si el destinatario no está en línea, puedes guardar el mensaje en la base de datos
+      console.log(`Usuario ${toUserId} no está en línea. Mensaje guardado.`);
+      // Lógica para guardar en la DB
+    }
+  });
+
+  // Escucha por desconexiones. Cuando un usuario se desconecta, elimina su socket del mapa
   socket.on('disconnect', () => {
-    console.log('Un usuario se ha desconectado');
+    console.log('Un usuario se ha desconectado:', socket.id);
+    
+    // Encuentra el userId asociado al socket.id y elimínalo
+    for (const [userId, socketId] of userSockets.entries()) {
+      if (socketId === socket.id) {
+        userSockets.delete(userId);
+        console.log(`Usuario ${userId} ha sido desconectado`);
+        break;
+      }
+    }
   });
 });
 
 // Inicia el servidor tanto para HTTP como para Socket.IO
 server.listen(process.env.PORT || 5000, () => {
   console.log('Servidor de chat escuchando en el puerto 5000');
+});
+
+// Captura el evento 'close' para reinicios limpios
+server.on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.log('Port 5000 is busy. Trying to restart...');
+    setTimeout(() => {
+      server.close();
+      server.listen(process.env.PORT || 5000);
+    }, 1000);
+  }
 });

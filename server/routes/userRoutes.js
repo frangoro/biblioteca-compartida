@@ -9,6 +9,7 @@ const {
     getUserById,
     updateUser,
     deleteUser,
+    getUserByUsername,
 } = require('../controllers/userController');
 
 // Importamos los middlewares para proteger las rutas
@@ -28,5 +29,8 @@ router.route('/:id')
     .get(protect, getUserById)      // Solo admins pueden ver cualquier usuario por ID (o usuario actual puede ver su propio perfil)
     .put(protect, updateUser)       // Solo admins pueden editar cualquier usuario (o usuario actual puede editar su propio perfil)
     .delete(protect, admin, deleteUser);   // Solo admins pueden eliminar cualquier usuario
+
+router.route('/search/:username').get(protect, getUserByUsername);
+
 
 module.exports = router;
