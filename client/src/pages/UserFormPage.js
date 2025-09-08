@@ -25,7 +25,7 @@ function UserFormPage() {
 
   // Lógica para determinar si un administrador está editando
   // o si es el propio usuario editando su perfil
-  const isSelfEditing = userInfo && id === userInfo.id;
+  const isSelfEditing = userInfo && id === userInfo._id;
   const isAdminEditing = userInfo && userInfo.role === 'admin' && id;
 
   const location = useLocation();
@@ -125,7 +125,7 @@ function UserFormPage() {
       
       {error && <div className="alert alert-danger" role="alert">{error}</div>}
       
-      <form onSubmit={(e) => handleSubmit(e, id || userInfo?.id)}>
+      <form onSubmit={(e) => handleSubmit(e, id || userInfo._id)}>
         <div className="mb-3">
           <label htmlFor="username" className="form-label">Nombre:</label>
           <input

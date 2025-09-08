@@ -28,6 +28,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     // Efecto para cargar los datos desde localStorage al iniciar la app
+    // Cada vez que se abre una nueva pestaña, se vuevle a ejecutar y 
+    // se renderiza todo el árbol de componentes. Por tanto hay que volver a 
+    // sacar el usuario del localStorage y verificar si el token es válido.
     useEffect(() => {
         try {
             const storedToken = localStorage.getItem('token');
