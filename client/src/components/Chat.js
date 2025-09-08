@@ -17,7 +17,7 @@ function Chat({ recipientId }) {
   const [searchResults, setSearchResults] = useState([]);
   const [recipient, setRecipient] = useState(null); // Almacena el usuario seleccionado
 
-  // Efecto para buscar usuarios mientras el usuario escribe
+  // Buscar usuarios mientras el usuario escribe
   useEffect(() => {
     const fetchUsers = async () => {
       if (searchTerm) {
@@ -42,31 +42,34 @@ function Chat({ recipientId }) {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
-
+  
+  // El usuario se une al chat y le dice al servidor quién es
   useEffect(() => {
-    // El usuario se une al chat y le dice al servidor quién es
-    if (userInfo && userInfo._id) {
-      socket.emit('join', userInfo._id);
+    if (userInfo && userInfo.id) {
+      socket.emit('join', userInfo.id);
     }
   }, [userInfo]);
 
+  // Escucha mensajes entrantes
   useEffect(() => {
     socket.on('private message', (msg) => {
-      // Asegúrate de que el mensaje es para la conversación actual
-      if (recipient && (msg.fromUserId === recipient._id || msg.toUserId === recipient._id)) {
+      // Si el mensaje es para ti, añádelo a la lista
+      if (msg.toUserId === userInfo.id) {
         setMessages((prevMessages) => [...prevMessages, msg.message]);
       }
     });
     return () => {
       socket.off('private message');
     };
-  }, [recipient]);
+  }, [userInfo]);
 
+  // Envía un mensaje privado al usuario seleccionado
   const sendMessage = (e) => {
     e.preventDefault();
     if (message && recipient) {
       socket.emit('private message', {
-        toUserId: recipient._id,
+        fromUserId: userInfo.id,
+        toUserId: recipient.id,
         message: message,
       });
       setMessages((prev) => [...prev, message]); // Muestra tu propio mensaje
@@ -74,11 +77,12 @@ function Chat({ recipientId }) {
     }
   };
 
+  // Limpia la búsqueda y los mensajes de la pantalla y selecciona un usuario para chatear
   const handleSelectRecipient = (selectedUser) => {
     setRecipient(selectedUser);
     setSearchTerm('');
     setSearchResults([]);
-    setMessages([]); // Limpia los mensajes para la nueva conversación
+    setMessages([]); 
   };
 
   return (
@@ -93,7 +97,7 @@ function Chat({ recipientId }) {
         {searchResults.length > 0 && (
           <ul className={styles.searchResults}>
             {searchResults.map((user) => (
-              <li key={user._id} onClick={() => handleSelectRecipient(user)}>
+              <li key={user.id} onClick={() => handleSelectRecipient(user)}>
                 {user.username}
               </li>
             ))}
@@ -101,6 +105,7 @@ function Chat({ recipientId }) {
         )}
       </div>
 
+      {/* La interfaz de chat solo se muestra si hay un destinatario. TODO. mostrar siempre que haya conversaciones previas */}
       {recipient && (
         <div className={styles.chatWindow}>
           <h3>Chateando con: {recipient.username}</h3>

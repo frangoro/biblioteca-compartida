@@ -59,7 +59,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // Crea un servidor HTTP con Express
 const server = http.createServer(app);
 
-// Crea una instancia de Socket.IO, conectándola al servidor HTTP
+// Crea una instancia de Socket.IO (el servidor del chat), conectándola al servidor HTTP
 const io = new Server(server, {
   cors: {
     origin: process.env.REACT_APP_API_URL, // Permite la conexión desde el cliente de React
@@ -70,23 +70,30 @@ const io = new Server(server, {
 const userSockets = new Map(); // Mapa para guardar el userId y su socket.id
 
 // Escucha por nuevas conexiones de clientes
+// socket representa la conexión individual de cada usuario
 io.on('connection', (socket) => {
-  console.log('Un usuario se ha conectado:', socket.id);
-
+  console.log(`Un usuario se ha conectado al servidor, pero no al chat:`, socket.id);
+  
   // Escucha el evento 'join' para que el usuario se identifique
   socket.on('join', (userId) => {
     userSockets.set(userId, socket.id); // Guarda la relación userId -> socket.id
     console.log(`Usuario ${userId} se ha unido al chat`);
+    console.log('userSockets:', Object.fromEntries(userSockets));
   });
 
   // Escucha por un evento de chat. Cuando un usuario envía un mensaje privado
   // busca el socket del destinatario y le envía el mensaje
   socket.on('private message', ({ toUserId, message }) => {
     const recipientSocketId = userSockets.get(toUserId);
-
+    // Si está conectado al chat, le envía el mensaje
     if (recipientSocketId) {
-      // Si el destinatario está conectado, le envía el mensaje directamente
-      io.to(recipientSocketId).emit('private message', { fromUserId: socket.id, message });
+      console.log(`Usuario ${toUserId} está en línea.`);
+      // Busca el ID del emisor
+      const fromUserId = [...userSockets.entries()].find(([userId, socketId]) => socketId === socket.id)?.[0];
+
+        if (fromUserId) {
+            io.to(recipientSocketId).emit('private message', { fromUserId, toUserId, message });
+        }
       
       // Opcional: También puedes enviar una confirmación al emisor
       // socket.emit('message sent', 'Mensaje enviado con éxito');
@@ -109,6 +116,7 @@ io.on('connection', (socket) => {
         break;
       }
     }
+    console.log('userSockets:', Object.fromEntries(userSockets));
   });
 });
 
