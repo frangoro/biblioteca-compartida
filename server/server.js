@@ -75,24 +75,28 @@ io.on('connection', (socket) => {
   console.log(`Un usuario se ha conectado al servidor, pero no al chat:`, socket.id);
   
   // Escucha el evento 'join' para que el usuario se identifique
-  socket.on('join', (userId) => {
-    userSockets.set(userId, socket.id); // Guarda la relación userId -> socket.id
-    console.log(`Usuario ${userId} se ha unido al chat`);
-    console.log('userSockets:', Object.fromEntries(userSockets));
+  socket.on('join', (user) => {
+    userSockets.set(user, socket.id); // Guarda la relación userId -> socket.id
+    console.log(`Usuario ${user.username} se ha unido al chat`);
+    console.log('userSockets:', userSockets);
   });
 
   // Escucha por un evento de chat. Cuando un usuario envía un mensaje privado
   // busca el socket del destinatario y le envía el mensaje
-  socket.on('private message', ({ toUserId, message }) => {
-    const recipientSocketId = userSockets.get(toUserId);
+  socket.on('private message', ({ fromUserId, toUserId, message }) => {
+    console.log(`Mensaje privado de ${fromUserId} a ${toUserId}: ${message}`);
+    const recipientSocketId = getByInternalKey(userSockets,'id',toUserId);
+    //const recipientSocketId = userSockets.get(toUserId);
     // Si está conectado al chat, le envía el mensaje
     if (recipientSocketId) {
       console.log(`Usuario ${toUserId} está en línea.`);
       // Busca el ID del emisor
-      const fromUserId = [...userSockets.entries()].find(([userId, socketId]) => socketId === socket.id)?.[0];
+      //const user = [...userSockets.entries()].find(([userId, socketId]) => socketId === socket.id)?.[0];
+      const user = getObjectByInternalKey(userSockets,'id',fromUserId);
 
-        if (fromUserId) {
-            io.to(recipientSocketId).emit('private message', { fromUserId, toUserId, message });
+        if (user) {
+          console.log(`Encontrado usuario emisor: ${user.username}`);
+            io.to(recipientSocketId).emit('private message', { toUserId:toUserId, fromUserId: fromUserId, message });
         }
       
       // Opcional: También puedes enviar una confirmación al emisor
@@ -116,7 +120,7 @@ io.on('connection', (socket) => {
         break;
       }
     }
-    console.log('userSockets:', Object.fromEntries(userSockets));
+    console.log('userSockets:', userSockets);
   });
 });
 
@@ -135,3 +139,43 @@ server.on('error', (e) => {
     }, 1000);
   }
 });
+
+/**
+ * Busca un valor en el Map usando una propiedad interna de la clave objeto.
+ * @param {Map} mapa - El objeto Map a buscar.
+ * @param {string} propiedad - El nombre de la propiedad dentro de la clave objeto (ej. 'id').
+ * @param {*} valorBuscado - El valor de la propiedad que estamos buscando (ej. 101).
+ * @returns {*} El valor asociado en el Map, o undefined si no se encuentra.
+ */
+function getByInternalKey(mapa, propiedad, valorBuscado) {
+  // 1. Itera sobre las claves del Map
+  for (const claveObjeto of mapa.keys()) {
+    // 2. Comprueba si la propiedad interna coincide con el valor buscado
+    if (claveObjeto && claveObjeto[propiedad] === valorBuscado) {
+      // 3. ¡Coincidencia! Usa la clave objeto EXACTA para obtener el valor
+      return mapa.get(claveObjeto);
+    }
+  }
+  // 4. Si el bucle termina sin encontrar nada
+  return undefined;
+}
+
+/**
+ * Busca un valor en el Map usando una propiedad interna de la clave objeto.
+ * @param {Map} mapa - El objeto Map a buscar.
+ * @param {string} propiedad - El nombre de la propiedad dentro de la clave objeto (ej. 'id').
+ * @param {*} valorBuscado - El valor de la propiedad que estamos buscando (ej. 101).
+ * @returns {*} El valor asociado en el Map, o undefined si no se encuentra.
+ */
+function getObjectByInternalKey(mapa, propiedad, valorBuscado) {
+  // 1. Itera sobre las claves del Map
+  for (const claveObjeto of mapa.keys()) {
+    // 2. Comprueba si la propiedad interna coincide con el valor buscado
+    if (claveObjeto && claveObjeto[propiedad] === valorBuscado) {
+      // 3. ¡Coincidencia! Usa la clave objeto EXACTA para obtener el valor
+      return claveObjeto;
+    }
+  }
+  // 4. Si el bucle termina sin encontrar nada
+  return undefined;
+}

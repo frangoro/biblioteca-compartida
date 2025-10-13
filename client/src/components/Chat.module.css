@@ -51,3 +51,154 @@
 .chat-send-btn:hover {
     background: #0056b3;
 }
+
+.chatLayout {
+    display: flex;
+    height: 80vh; /* Set a specific height for the chat window, adjust as needed */
+    max-width: 1200px;
+    margin: 40px auto; /* Center the chat container */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures content doesn't spill over */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+/* Panel de la izquierda */
+
+.conversationList {
+    width: 300px; /* Fixed width for the sidebar */
+    border-right: 1px solid #eee;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+}
+
+.conversationList input[type="text"] {
+    padding: 15px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    font-size: 1em;
+    outline: none;
+    background-color: #fff;
+}
+
+.conversationList ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto; /* Scrollable list of conversations */
+}
+
+.conversationList li {
+    padding: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+    font-weight: 500;
+}
+
+.conversationList li:hover {
+    background-color: #e8e8e8;
+}
+
+/* Style for the currently active conversation */
+.conversationList li.active {
+    background-color: #007bff; /* Primary color */
+    color: white;
+}
+
+/* Panel de la derecha */
+.chatWindow {
+    flex-grow: 1; /* Takes up the remaining space */
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background-color: #ffffff;
+}
+
+.chatWindow h3 {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+    background-color: #f9f9f9;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* Message List */
+.messageList {
+    list-style: none;
+    padding: 20px;
+    margin: 0;
+    flex-grow: 1;
+    overflow-y: auto; /* Scrollable messages */
+}
+
+.messageList li {
+    max-width: 60%;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    line-height: 1.4;
+    word-wrap: break-word; /* Ensures long words wrap */
+}
+
+/* Styling for ME (Sender) */
+.myMessage {
+    align-self: flex-end; /* Pushes the message to the right */
+    background-color: #007bff; /* A prominent color for your messages */
+    color: white;
+    margin-left: auto; /* Key to pushing to the right */
+}
+
+/* Styling for OTHER (Recipient) */
+.otherMessage {
+    align-self: flex-start; /* Keeps the message on the left */
+    background-color: #e5e5ea; /* A neutral, light color */
+    color: #333;
+    margin-right: auto; /* Key to keeping it on the left */
+}
+
+/* Input Form */
+.messageForm {
+    display: flex;
+    padding: 10px 15px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+
+.messageForm input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    margin-right: 10px;
+    font-size: 1em;
+    outline: none;
+}
+
+.messageForm button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.messageForm button:hover {
+    background-color: #0056b3;
+}
+
+/* Empty State */
+.emptyChat {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    font-size: 1.2em;
+}
