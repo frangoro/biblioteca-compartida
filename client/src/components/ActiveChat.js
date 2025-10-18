@@ -18,12 +18,12 @@ const ActiveChat = ({ conversation, userInfo, sendMessage, message, setMessage }
           <li
             key={index}
             className={
-              msg.fromUserId === userInfo.id
+              msg.sender === userInfo.id || msg.fromUserId === userInfo.id
                 ? styles.myMessage
                 : styles.otherMessage
             }
           >
-            <p>{msg.message}</p>
+            <p>{msg.content || msg.message}</p> {/* Usa content para DB y message para Socket */}
           </li>
         ))}
       </ul>

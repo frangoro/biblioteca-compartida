@@ -10,10 +10,18 @@ import styles from './Chat.module.css';
 // Conecta al servidor de Socket.IO
 const socket = io(process.env.REACT_APP_SERVER_URL || 'http://localhost:5000');
 
+const getConversationsFromDB = async (userId) => {
+    // TODO: Implementa aquí la llamada a tu nueva ruta de Express: /api/conversations/:userId
+    // Ejemplo:
+    const response = await fetch(`/api/conversations/${userId}`);
+    if (!response.ok) throw new Error('Error al cargar las conversaciones');
+    return response.json();
+};
+
 function Chat({ recipientId }) {
   const { userInfo } = useAuth(); // Obtén el ID del usuario logueado
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
+  //TODO: ELiminar esto: const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [recipient, setRecipient] = useState(null); // Almacena el usuario seleccionado
@@ -46,25 +54,64 @@ function Chat({ recipientId }) {
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
   
-  // El usuario se une al chat y le dice al servidor quién es
+  // Efecto para Unirse al Chat y Cargar Conversaciones
   useEffect(() => {
-    if (userInfo && userInfo.id) {
-      socket.emit('join', userInfo);
-    }
+    if (!userInfo || !userInfo.id) return;
+    
+    // Unirse al chat
+    socket.emit('join', userInfo.id); // Solo necesitas el ID, no todo el userInfo
+
+    // Cargar conversaciones desde MongoDB
+    const loadConversations = async () => {
+      try {
+        const dbConversations = await getConversationsFromDB(userInfo.id);
+        
+        // Transformar los datos de la DB al formato de estado local:
+        const formattedConversations = dbConversations.map(conv => {
+            // Encuentra al otro participante
+            const otherParticipant = conv.participants.find(p => p.id !== userInfo.id);
+            
+            return {
+                conversationId: conv._id, // Usamos el ID de la conversación de Mongo
+                userId: otherParticipant.id, // ID del otro usuario
+                username: otherParticipant.username,
+                messages: conv.messages // Historial completo de mensajes
+            };
+        });
+        
+        setConversations(formattedConversations);
+
+        // Opcional: Establecer la conversación más reciente como activa
+        if (formattedConversations.length > 0) {
+            setActiveConversationId(formattedConversations[0].userId);
+            // También debes establecer el destinatario (recipient)
+            setRecipient(formattedConversations[0].userId);
+        }
+
+      } catch (error) {
+        console.error("Error al cargar conversaciones iniciales:", error);
+      }
+    };
+
+    loadConversations();
   }, [userInfo]);
 
-  // Escucha mensajes entrantes
+  // Manejo de Mensajes Entrantes (Simplificado y Corrección de Lógica)
   useEffect(() => {
+    if (!userInfo || !userInfo.id) return;
+    
+    // Asegúrate de que el servidor envía el objeto `msg` con:
+    // { fromUserId, message, conversationId, username }
     socket.on('private message', (msg) => {
-      // Si el mensaje es para ti, añádelo a la lista
-      if (msg.toUserId === userInfo.id) {
-        setConversations((prevConversations) => {
+      // El mensaje siempre tiene que ir a la conversación correcta, sin importar quién la tenga abierta
+      setConversations((prevConversations) => {
         const senderId = msg.fromUserId;
+        // Busca si ya tienes una conversación con el remitente
         const conversationExists = prevConversations.find(
           (conv) => conv.userId === senderId
         );
-        setMessages((prevMessages) => [...prevMessages, msg.message]);
-        // If a conversation with the sender already exists, add the message to it.
+        
+        // Si existe, actualiza el array de mensajes
         if (conversationExists) {
           return prevConversations.map((conv) =>
             conv.userId === senderId
@@ -72,75 +119,75 @@ function Chat({ recipientId }) {
               : conv
           );
         } else {
-          // If not, create a new conversation for the sender.
+          // Si es la primera vez que te escribe, crea una nueva conversación
           return [
-            ...prevConversations,
-            { userId: senderId, messages: [msg], username: userInfo.username }, // TODO: You'll need to fetch the username here.
+            { userId: senderId, messages: [msg], username: msg.fromUsername }, // Asegúrate que el servidor envíe `fromUsername`
+            ...prevConversations, // Pon la nueva conversación al inicio
           ];
         }
       });
-      }
     });
+
     return () => {
       socket.off('private message');
     };
   }, [userInfo]);
 
-  // Envía un mensaje privado al usuario seleccionado
+  // Envío de Mensajes (Asegurando la consistencia con la DB)
   const sendMessage = (e) => {
     e.preventDefault();
-    if (message && recipient) {
+    // Asegúrate de usar el ID del usuario activo para el envío
+    const currentRecipientId = activeConversationId; 
+    
+    if (message && currentRecipientId) {
+      // 1. Emitir al servidor
       socket.emit('private message', {
         fromUserId: userInfo.id,
-        toUserId: recipient,
+        toUserId: currentRecipientId,
         message: message,
       });
-      setMessages((prev) => [...prev, message]); // Muestra tu propio mensaje
-      setMessage(''); // Borra el campo de entrada
-      // Añade el mensaje a la conversación actual
+
+      // 2. Actualizar el estado local inmediatamente (sin esperar la respuesta del socket)
       setConversations((prevConversations) => {
-        const conversationExists = prevConversations.find(
-          (conv) => conv.userId === recipient
+        const newMessage = { fromUserId: userInfo.id, content: message, timestamp: new Date() }; // Usa content o message según lo que esperes
+        
+        return prevConversations.map((conv) =>
+          conv.userId === currentRecipientId
+            ? { ...conv, messages: [...conv.messages, newMessage] }
+            : conv
         );
-        if (conversationExists) {
-          return prevConversations.map((conv) =>
-            conv.userId === recipient
-              ? { ...conv, messages: [...conv.messages, { fromUserId: userInfo.id, message }] }
-              : conv
-          );
-        } else {
-          // Si no existe la conversación, créala
-          return [
-            ...prevConversations,
-            { userId: recipient, messages: [{ fromUserId: userInfo.id, message }], username: 'Unknown User' }, // TODO: Fetch username
-          ];
-        }
       });
+      
+      setMessage('');
     }
   };
 
-  // The function to be called from the conversation list
-const handleSelectConversation = (userId) => {
-    // 1. Check if the conversation already exists
+  // Función de Selección de Conversación (Simplificada)
+  const handleSelectConversation = (userId) => {
     const existingConversation = conversations.find(conv => conv.userId === userId);
 
     if (existingConversation) {
-        // If it exists, simply set it as the active conversation
+        // Establecer el ID de la conversación activa y el recipient
         setActiveConversationId(userId);
+        setRecipient(userId);
     } else {
-        // If not, create a new conversation placeholder
+        // Lógica para crear un placeholder para una nueva conversación (si el usuario la busca)
+        const newRecipient = searchResults.find(user => user.id === userId);
         const newConversation = {
             userId: userId,
-            username: searchResults.find(user => user.id === userId)?.username || 'Usuario Desconocido',
+            username: newRecipient?.username || 'Usuario Desconocido',
             messages: []
         };
-        // Add it to the conversations state
-        setConversations(prevConversations => [...prevConversations, newConversation]);
-        // Set the new conversation as active
+        
+        setConversations(prevConversations => [newConversation, ...prevConversations]);
         setActiveConversationId(userId);
+        setRecipient(userId);
+        
+        // Limpiar resultados de búsqueda después de seleccionar
+        setSearchTerm('');
+        setSearchResults([]);
     }
-    setRecipient(userId);
-};
+  };
 
   return (
   <div className={styles.chatLayout}>

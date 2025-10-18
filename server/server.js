@@ -10,6 +10,7 @@ const morgan = require('morgan');
 const userRoutes = require('./routes/userRoutes');
 const http = require('http');
 const { Server } = require('socket.io');
+const Conversation = require('./models/Conversation');
 
 const app = express();
 
@@ -47,6 +48,10 @@ app.use('/api/users', userRoutes);
 const uploadRoutes = require('./routes/uploadRoutes');
 app.use('/api/upload', uploadRoutes);
 
+// Ruta para la subida de imágenes a la nube
+const conversationsRoutes = require('./routes/conversationRoutes');
+app.use('/api/conversations', conversationsRoutes);
+
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -83,17 +88,67 @@ io.on('connection', (socket) => {
 
   // Escucha por un evento de chat. Cuando un usuario envía un mensaje privado
   // busca el socket del destinatario y le envía el mensaje
-  socket.on('private message', ({ fromUserId, toUserId, message }) => {
+  socket.on('private message', async ({ fromUserId, toUserId, message }) => {
     console.log(`Mensaje privado de ${fromUserId} a ${toUserId}: ${message}`);
-    const toSocketId = userSockets.get(toUserId);
+    //TODO eliminar: const recipientSocketId = userSockets.get(toUserId);
+    const recipientSocketId = userSockets.get(toUserId);
     // Si está conectado al chat, le envía el mensaje
-    if (toSocketId) {
-      console.log(`Usuario ${toUserId} está en el socket ${toSocketId}.`);
-      io.to(toSocketId).emit('private message', {toUserId, fromUserId, message });
+    if (recipientSocketId) {
+      console.log(`Usuario ${toUserId} está en el socket ${recipientSocketId}.`);
+      io.to(recipientSocketId).emit('private message', {toUserId, fromUserId, message });
     } else {
       // Si el destinatario no está en línea, puedes guardar el mensaje en la base de datos
       console.log(`Usuario ${toUserId} no está en línea. Mensaje guardado.`);
       // TODO: Lógica para guardar en la DB
+    }
+    // 2. Lógica de MongoDB: Buscar o Crear la Conversación
+    
+    // Definir los IDs de los participantes de forma consistente (ordenados)
+    const participantsArray = [fromUserId, toUserId].sort();
+
+    try {
+        let conversation = await Conversation.findOne({
+            participants: { $all: participantsArray } // Busca una conversación que contenga AMBOS IDs
+        });
+
+        // Si la conversación no existe, la creamos
+        if (!conversation) {
+            conversation = await Conversation.create({
+                participants: participantsArray,
+                messages: []
+            });
+        }
+
+        // 3. Añadir el nuevo mensaje
+        const newMessage = {
+            sender: fromUserId,
+            content: message
+        };
+        conversation.messages.push(newMessage);
+        await conversation.save();
+
+        // 4. Enviar el mensaje por Socket.IO (ahora con el ID del mensaje para confirmación)
+        if (recipientSocketId) {
+            // Envía el mensaje completo (incluyendo el timestamp generado por Mongoose)
+            io.to(recipientSocketId).emit('private message', {
+                fromUserId: fromUserId,
+                message: newMessage.content,
+                timestamp: newMessage.timestamp,
+                conversationId: conversation._id
+            });
+        }
+
+        // Opcional: Envía al propio emisor el mensaje con el timestamp
+        socket.emit('private message', {
+             fromUserId: fromUserId,
+             message: newMessage.content,
+             timestamp: newMessage.timestamp,
+             conversationId: conversation._id
+        });
+
+
+    } catch (error) {
+        console.error("Error al guardar el mensaje en DB:", error);
     }
   });
 
