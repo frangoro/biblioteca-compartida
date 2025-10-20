@@ -59,7 +59,7 @@ function Chat({ recipientId }) {
     if (!userInfo || !userInfo.id) return;
     
     // Unirse al chat
-    socket.emit('join', userInfo.id); // Solo necesitas el ID, no todo el userInfo
+    socket.emit('join', userInfo); 
 
     // Cargar conversaciones desde MongoDB
     const loadConversations = async () => {
@@ -219,24 +219,24 @@ function Chat({ recipientId }) {
     </div>
 
     {/* Right Panel: Active Chat Window */}
-      <div className={styles.chatWindow}>
-        {activeConversationId ? (
-          <ActiveChat
-            conversation={
-              conversations.find((conv) => conv.userId === activeConversationId)
-            }
-            userInfo={userInfo}
-            sendMessage={sendMessage}
-            message={message}
-            setMessage={setMessage} 
-          />
-        ) : (
-          <div className={styles.emptyChat}>
-            Selecciona una conversación para chatear.
-          </div>
-        )}
-      </div>
+    <div className={styles.rightPanelContainer}>
+      {activeConversationId ? (
+        <ActiveChat
+          conversation={
+            conversations.find((conv) => conv.userId === activeConversationId)
+          }
+          userInfo={userInfo}
+          sendMessage={sendMessage}
+          message={message}
+          setMessage={setMessage} 
+        />
+      ) : (
+        <div className={styles.emptyChat}>
+          Selecciona una conversación para chatear.
+        </div>
+      )}
     </div>
+  </div>
   );
 }
 

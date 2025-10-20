@@ -1,8 +1,20 @@
 /* Ventana derecha del Chat*/
 
+import React, { useEffect, useRef } from 'react';
 import styles from './Chat.module.css';
 
 const ActiveChat = ({ conversation, userInfo, sendMessage, message, setMessage }) => {
+  
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation.messages.length]); // Scroll cada vez que cambia el número de mensajes
+
   if (!conversation) {
     return <div className={styles.emptyChat}>Selecciona una conversación para chatear.</div>;
   }
@@ -26,6 +38,7 @@ const ActiveChat = ({ conversation, userInfo, sendMessage, message, setMessage }
             <p>{msg.content || msg.message}</p> {/* Usa content para DB y message para Socket */}
           </li>
         ))}
+        <div ref={messagesEndRef} /> {/* Elemento vacío al final */}
       </ul>
       <form onSubmit={sendMessage} className={styles.messageForm}>
         <input
