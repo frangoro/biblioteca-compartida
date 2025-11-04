@@ -24,7 +24,7 @@ const App = () => {
         <Route path="/myBooks" element={<ProtectedRoute><BookList /></ProtectedRoute>} />
         <Route path="/addBook" element={<BookForm onSave={() => window.location = '/'} />} />
         <Route path="/editBook/:id" element={<BookForm onSave={() => window.location = '/'} />} />
-        <Route path="/books/:id" element={<BookDetails />} />
+        <Route path="/books/:id" element={<ProtectedRoute><BookDetails /></ProtectedRoute>} />
         <Route path="/loans" element={<ProtectedRoute><Loans /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

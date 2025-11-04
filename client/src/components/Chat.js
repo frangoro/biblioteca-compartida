@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import * as userService from '../services/userService';
 import ActiveChat from './ActiveChat';
+import { useChat } from '../context/ChatContext';
 import styles from './Chat.module.css';
 
 // Conecta al servidor de Socket.IO
@@ -19,6 +20,7 @@ const getConversationsFromDB = async (userId) => {
 };
 
 function Chat({ recipientId }) {
+  const { recipientUserId, recipientUsername, clearChat } = useChat();
   const { userInfo } = useAuth(); // Obtén el ID del usuario logueado
   const [message, setMessage] = useState('');
   //TODO: ELiminar esto: const [messages, setMessages] = useState([]);
@@ -28,6 +30,27 @@ function Chat({ recipientId }) {
   const [conversations, setConversations] = useState([]); // Lista de conversaciones previas con otros usuarios (panel de la izquierda)
   const [activeConversationId, setActiveConversationId] = useState(null); // ID de la conversación activa (actualmente abierta)
 
+  // useEffect para manejar la carga y selección inicial
+  useEffect(() => {
+    // Si llegaste a /chat sin un destinatario global, vuelve a Home.
+    if (!recipientUserId) {
+        // Opcional: navegar de vuelta si no hay destinatario
+        // navigate('/'); 
+        return;
+    }
+    
+    // Si el usuario llega a /chat a través del botón "Solicitar préstamo":
+    // 1. Simula la selección de la conversación con el ID global.
+    handleSelectConversation(recipientUserId); 
+    
+    // 2. Limpia el estado global después de usarlo para evitar que el mismo chat 
+    //    se abra la próxima vez que se cargue la página sin usar el botón.
+    return () => {
+        clearChat(); 
+    };
+
+  }, [recipientUserId]); // Ejecuta cuando el ID del destinatario global cambia
+  
   // Buscar usuarios mientras el usuario escribe
   useEffect(() => {
     const fetchUsers = async () => {

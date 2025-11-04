@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter} from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
+import { ChatProvider } from './context/ChatContext';
 import reportWebVitals from './reportWebVitals';
 import { library } from '@fortawesome/fontawesome-svg-core'; // Importa librería Font Awesome
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons'; // Importa el icono de usuario que queremos
@@ -21,7 +22,9 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <ChatProvider> 
+          <App />
+        </ChatProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
