@@ -4,6 +4,10 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import styles from "./BookCard.module.css";
 
+/**
+ * Componente que muestra la información básica de un libro en una tarjeta.
+ * Se usa para listar libros en la página principal.
+ */
 function BookCard({ book }) {
 
   const navigate = useNavigate();
@@ -39,10 +43,10 @@ function BookCard({ book }) {
         <h3 className={styles["book-card-title"]}>{title}</h3>
         <p className={styles["book-card-author"]}>Autor: {author}</p>
         <p className={styles["book-card-description"]}>{description}</p>
-        <Link to={`/books/${_id}`} className={styles["book-card-button"]}
+        <button className={styles["book-card-button"]}
         onClick={handleSolicitarPrestamo}>
           Ver Detalles
-        </Link>
+        </button>
       </div>
     </div>
   );
