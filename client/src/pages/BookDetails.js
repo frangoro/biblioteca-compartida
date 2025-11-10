@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { readBook } from '../services/bookService';
+import { useAuth } from '../context/AuthContext';
 import styles from './BookDetails.module.css';
 
 function BookDetails() {
@@ -11,7 +12,9 @@ function BookDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [loanStatus, setLoanStatus] = useState(''); // Estado para el feedback de la solicitud de préstamo
+  const { userInfo } = useAuth();
 
+  // Carga los detalles del libro cuando el componente se monta o el ID cambia
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
@@ -28,9 +31,10 @@ function BookDetails() {
     };
 
     fetchBookDetails();
-  }, [id]); // Dependencia del ID para recargar si el ID cambia
+  }, [id]);
 
-  const handleRequestLoan = async () => {
+  // TODO: Llamada a la API para solicitar un préstamo. 
+  /*const handleRequestLoan = async () => {
     setLoanStatus('Cargando...');
     try {
       // Aquí harías la llamada a tu API de préstamo
@@ -38,9 +42,8 @@ function BookDetails() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${yourAuthToken}` // Si usas autenticación
         },
-        body: JSON.stringify({ bookId: id, borrowerId: 'idDelUsuarioLogueado' }) // Envía los datos necesarios
+        body: JSON.stringify({ bookId: id, borrowerId: userInfo.id }) // Envía los datos necesarios
       });
 
       if (!response.ok) {
@@ -56,7 +59,7 @@ function BookDetails() {
       console.error('Error al solicitar el préstamo:', err);
       setLoanStatus(`Error: ${err.message || 'No se pudo solicitar el préstamo.'}`);
     }
-  };
+  };*/
 
   if (loading) {
     return (
@@ -114,7 +117,7 @@ function BookDetails() {
               {/* Aquí podrías añadir más detalles: género, ISBN, disponibilidad, etc. */}
               <button
                 className={styles['loan-request-button']}
-                onClick={handleRequestLoan}
+                onClick={alert('Funcionalidad de solicitud de préstamo en desarrollo.')}
                 disabled={loanStatus === 'Cargando...'} // Deshabilita el botón mientras carga
               >
                 {loanStatus === 'Cargando...' ? 'Solicitando...' : 'Solicitar Préstamo'}

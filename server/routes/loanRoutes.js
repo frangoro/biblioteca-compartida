@@ -72,9 +72,9 @@ router.get('/:userId/loan-requests', protect, async (req, res) => {
 });
 
 // --- POST /api/loans (solicitar préstamo) ---
-router.post('/', protect, async (req, res) => { // La ruta base es /api/loans
-  const { bookId } = req.body;
-  const borrowerId = req.userId; // El usuario autenticado es el que solicita el préstamo
+router.post('/',  async (req, res) => { // La ruta base es /api/loans
+  const { bookId,borrowerId } = req.body;
+  //const borrowerId = req.userId; //TODO: El usuario autenticado es el que solicita el préstamo
 
   if (!bookId || !borrowerId) {
     return res.status(400).json({ message: 'bookId y un usuario autenticado son requeridos.' });
