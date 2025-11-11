@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { readBook } from '../services/bookService';
 import { useAuth } from '../context/AuthContext';
+import { useChat } from '../context/ChatContext';
 import styles from './BookDetails.module.css';
 
 function BookDetails() {
@@ -13,6 +14,8 @@ function BookDetails() {
   const [error, setError] = useState(null);
   const [loanStatus, setLoanStatus] = useState(''); // Estado para el feedback de la solicitud de préstamo
   const { userInfo } = useAuth();
+  const navigate = useNavigate();
+  const { startNewChat } = useChat();
 
   // Carga los detalles del libro cuando el componente se monta o el ID cambia
   useEffect(() => {
@@ -60,6 +63,22 @@ function BookDetails() {
       setLoanStatus(`Error: ${err.message || 'No se pudo solicitar el préstamo.'}`);
     }
   };*/
+
+  const handleSolicitarPrestamo = () => {
+    const propietarioId = book.propietarioId; // Asumiendo que este campo existe
+    const propietarioUsername = book.propietario; 
+
+    if (userInfo && propietarioId === userInfo.id) {
+        alert("¡No puedes chatear contigo mismo!");
+        return;
+    }
+
+    // 1. Establece el estado global del chat
+    startNewChat(propietarioId, propietarioUsername); 
+    
+    // 2. Navega a la página de chat
+    navigate('/chat'); // Asegúrate que esta es la ruta correcta
+  };
 
   if (loading) {
     return (
@@ -117,7 +136,7 @@ function BookDetails() {
               {/* Aquí podrías añadir más detalles: género, ISBN, disponibilidad, etc. */}
               <button
                 className={styles['loan-request-button']}
-                onClick={alert('Funcionalidad de solicitud de préstamo en desarrollo.')}
+                onClick={handleSolicitarPrestamo}
                 disabled={loanStatus === 'Cargando...'} // Deshabilita el botón mientras carga
               >
                 {loanStatus === 'Cargando...' ? 'Solicitando...' : 'Solicitar Préstamo'}
