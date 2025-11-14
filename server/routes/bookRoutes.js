@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
         }
 
         // Ejecutar la consulta en la base de datos
-        const books = await Book.find(query);
+        const books = await Book.find(query).populate('owner', 'username email');
         res.json(books);
 
     } catch (error) {

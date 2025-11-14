@@ -1,3 +1,5 @@
+/* Página que muestra la lista de libros del usuario actual */
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { deleteBook, addBook, updateBook, getBooksQuery } from '../services/bookService';
 import { Button, Table, Modal, Form } from "react-bootstrap";

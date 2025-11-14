@@ -1,5 +1,7 @@
+/* Página de detalles del libro */
+
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { readBook } from '../services/bookService';
@@ -9,8 +11,10 @@ import styles from './BookDetails.module.css';
 
 function BookDetails() {
   const { id } = useParams(); // Obtiene el ID del libro de la URL (ej. /books/123)
-  const [book, setBook] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const passedBook = location.state?.bookDetails; // Intentar obtener el libro del estado de navegación (si existe)
+  const [book, setBook] = useState(passedBook || null); // Usar el libro pasado desde BookCard o null si se carga desde API
+  const [loading, setLoading] = useState(!passedBook);
   const [error, setError] = useState(null);
   const [loanStatus, setLoanStatus] = useState(''); // Estado para el feedback de la solicitud de préstamo
   const { userInfo } = useAuth();
@@ -19,22 +23,23 @@ function BookDetails() {
 
   // Carga los detalles del libro cuando el componente se monta o el ID cambia
   useEffect(() => {
-    const fetchBookDetails = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await readBook(id);
-        setBook(response.data);
-      } catch (err) {
-        console.error('Error al cargar los detalles del libro:', err);
-        setError('No se pudieron cargar los detalles del libro.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookDetails();
-  }, [id]);
+    // Si el libro NO fue pasado en la navegación, lo solicitamos a la API
+    if (!passedBook) {
+      const fetchBookDetails = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+          const response = await readBook(id);
+          setBook(response.data);
+        } catch (err) {
+          console.error('Error al cargar los detalles del libro:', err);
+          setError('No se pudieron cargar los detalles del libro.');
+          setLoading(false);
+        }
+      };
+      fetchBookDetails();
+    }
+  }, [id, passedBook]);
 
   // TODO: Llamada a la API para solicitar un préstamo. 
   /*const handleRequestLoan = async () => {
@@ -64,13 +69,14 @@ function BookDetails() {
     }
   };*/
 
-  const handleSolicitarPrestamo = () => {
-    const propietarioId = book.propietarioId; // Asumiendo que este campo existe
-    const propietarioUsername = book.propietario; 
+  // Nueva implementación de handleRequestLoan para iniciar chat con el propietario
+  const handleRequestLoan = () => {
+    const propietarioId = book.owner.id;
+    const propietarioUsername = book.owner.username; 
 
     if (userInfo && propietarioId === userInfo.id) {
         alert("¡No puedes chatear contigo mismo!");
-        return;
+        return
     }
 
     // 1. Establece el estado global del chat
@@ -136,7 +142,7 @@ function BookDetails() {
               {/* Aquí podrías añadir más detalles: género, ISBN, disponibilidad, etc. */}
               <button
                 className={styles['loan-request-button']}
-                onClick={handleSolicitarPrestamo}
+                onClick={handleRequestLoan}
                 disabled={loanStatus === 'Cargando...'} // Deshabilita el botón mientras carga
               >
                 {loanStatus === 'Cargando...' ? 'Solicitando...' : 'Solicitar Préstamo'}

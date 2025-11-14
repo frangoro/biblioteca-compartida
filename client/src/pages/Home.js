@@ -1,11 +1,11 @@
+/* Página principal que muestra la lista de libros de todos los usuarios */
+
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookCard from '../components/BookCard'; 
 import SearchBar from '../components/SearchBar'; 
 import styles from "./Home.module.css";
-
-
 
 function Home() {
   

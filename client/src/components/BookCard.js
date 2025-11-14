@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import styles from "./BookCard.module.css";
 
 /**
@@ -7,12 +7,19 @@ import styles from "./BookCard.module.css";
  * Se usa para listar libros en la página principal.
  */
 function BookCard({ book }) {
-
+  
+  const navigate = useNavigate();
+  
   if (!book) {
     return null;
   }
 
   const { _id, title, author, image, description } = book;
+
+  // Usar navigate para ir a la ruta y pasar el objeto 'book' en el estado
+  const handleViewDetails = () => {
+    navigate(`/books/${_id}`, { state: { bookDetails: book } }); 
+  };
 
   return (
     <div className={styles["book-card"]}>
@@ -21,7 +28,12 @@ function BookCard({ book }) {
         <h3 className={styles["book-card-title"]}>{title}</h3>
         <p className={styles["book-card-author"]}>Autor: {author}</p>
         <p className={styles["book-card-description"]}>{description}</p>
-        <Link to={`/books/${_id}`} className={styles["book-card-button"]}>Ver Detalles</Link>
+        <button 
+          onClick={handleViewDetails} 
+          className={styles["book-card-button"]}
+        >
+          Ver Detalles
+        </button>
       </div>
     </div>
   );
