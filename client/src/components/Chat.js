@@ -11,9 +11,8 @@ import styles from './Chat.module.css';
 // Conecta al servidor de Socket.IO
 const socket = io(process.env.REACT_APP_SERVER_URL || 'http://localhost:5000');
 
+// Función para obtener conversaciones desde la base de datos
 const getConversationsFromDB = async (userId) => {
-    // TODO: Implementa aquí la llamada a tu nueva ruta de Express: /api/conversations/:userId
-    // Ejemplo:
     const response = await fetch(`/api/conversations/${userId}`);
     if (!response.ok) throw new Error('Error al cargar las conversaciones');
     return response.json();
@@ -23,34 +22,81 @@ function Chat({ recipientId }) {
   const { recipientUserId, recipientUsername, clearChat } = useChat();
   const { userInfo } = useAuth(); // Obtén el ID del usuario logueado
   const [message, setMessage] = useState('');
-  //TODO: ELiminar esto: const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState([]); // Resultados de búsqueda de usuarios
   const [recipient, setRecipient] = useState(null); // Almacena el usuario seleccionado
   const [conversations, setConversations] = useState([]); // Lista de conversaciones previas con otros usuarios (panel de la izquierda)
   const [activeConversationId, setActiveConversationId] = useState(null); // ID de la conversación activa (actualmente abierta)
 
-  // useEffect para manejar la carga y selección inicial
-  useEffect(() => {
-    // Si llegaste a /chat sin un destinatario global, vuelve a Home.
-    if (!recipientUserId) {
-        // Opcional: navegar de vuelta si no hay destinatario
-        // navigate('/'); 
-        return;
-    }
-    
-    // Si el usuario llega a /chat a través del botón "Solicitar préstamo":
-    // 1. Simula la selección de la conversación con el ID global.
-    handleSelectConversation(recipientUserId); 
-    
-    // 2. Limpia el estado global después de usarlo para evitar que el mismo chat 
-    //    se abra la próxima vez que se cargue la página sin usar el botón.
-    return () => {
-        clearChat(); 
-    };
+  // Función de Selección de Conversación
+  const handleSelectConversation = (userId, username) => {
+    const existingConversation = conversations.find(conv => conv.userId === userId);
 
-  }, [recipientUserId]); // Ejecuta cuando el ID del destinatario global cambia
+    if (existingConversation) {
+        // Establecer el ID de la conversación activa y el recipient
+        setActiveConversationId(userId);
+    } else {
+        // Lógica para crear un placeholder para una nueva conversación
+        const newConversation = {
+            userId: userId,
+            username: username || 'Usuario Desconocido',
+            messages: []
+        };
+        
+        setConversations(prevConversations => {
+          const filteredList = prevConversations.filter(
+            conv => conv.userId !== userId
+          );
+          return [newConversation, ...filteredList]
+        });
+        setActiveConversationId(userId);
+        
+        // Limpiar resultados de búsqueda después de seleccionar si se viene de ahí
+        setSearchTerm('');
+        setSearchResults([]);
+    }
+    // Establece el destinatario para el envío de mensajes
+    setRecipient(userId);
+  };
+
+  // ID de los usuarios encontrados en la búsqueda
+  const searchUserIds = searchResults.map(user => user.id);
+
+  // Filtrar las conversaciones: solo incluimos aquellas cuyo userId NO está en los resultados 
+  // de búsqueda, así evitamos duplicados en la lista.
+  const filteredConversations = conversations.filter(conv => 
+    !searchUserIds.includes(conv.userId)
+  );
   
+  // Envío de Mensajes (Asegurando la consistencia con la DB)
+  const sendMessage = (e) => {
+    e.preventDefault();
+    // Asegúrate de usar el ID del usuario activo para el envío
+    const currentRecipientId = activeConversationId; 
+    
+    if (message && currentRecipientId) {
+      // 1. Emitir al servidor
+      socket.emit('private message', {
+        fromUserId: userInfo.id,
+        toUserId: currentRecipientId,
+        message: message,
+      });
+
+      // 2. Actualizar el estado local inmediatamente (sin esperar la respuesta del socket)
+      setConversations((prevConversations) => {
+        const newMessage = { fromUserId: userInfo.id, content: message, timestamp: new Date() }; // Usa content o message según lo que esperes
+        
+        return prevConversations.map((conv) =>
+          conv.userId === currentRecipientId
+            ? { ...conv, messages: [...conv.messages, newMessage] }
+            : conv
+        );
+      });
+      
+      setMessage('');
+    }
+  };
+ 
   // Buscar usuarios mientras el usuario escribe
   useEffect(() => {
     const fetchUsers = async () => {
@@ -102,10 +148,20 @@ function Chat({ recipientId }) {
             };
         });
         
-        setConversations(formattedConversations);
+        // carga las conversaciones nuevas junto con las anteriores, evitando duplicados
+        setConversations(prevConversations => {
+          const conversationsMap = new Map();
+          prevConversations.forEach(conv => {
+              conversationsMap.set(conv.userId, conv);
+          });
+          formattedConversations.forEach(conv => {
+              conversationsMap.set(conv.userId, conv);
+          });
+          return Array.from(conversationsMap.values());
+        });
 
         // Opcional: Establecer la conversación más reciente como activa
-        if (formattedConversations.length > 0) {
+        if (!recipientUserId && formattedConversations.length > 0) {
             setActiveConversationId(formattedConversations[0].userId);
             // También debes establecer el destinatario (recipient)
             setRecipient(formattedConversations[0].userId);
@@ -119,7 +175,7 @@ function Chat({ recipientId }) {
     loadConversations();
   }, [userInfo]);
 
-  // Manejo de Mensajes Entrantes (Simplificado y Corrección de Lógica)
+  // Manejo de Mensajes Entrantes
   useEffect(() => {
     if (!userInfo || !userInfo.id) return;
     
@@ -156,62 +212,27 @@ function Chat({ recipientId }) {
     };
   }, [userInfo]);
 
-  // Envío de Mensajes (Asegurando la consistencia con la DB)
-  const sendMessage = (e) => {
-    e.preventDefault();
-    // Asegúrate de usar el ID del usuario activo para el envío
-    const currentRecipientId = activeConversationId; 
+  // useEffect para manejar la carga y selección inicial
+  useEffect(() => {
+    // Si llegaste a /chat sin un destinatario global, vuelve a Home.
+    if (!recipientUserId) {
+        // Opcional: navegar de vuelta si no hay destinatario
+        // navigate('/'); 
+        return;
+    }
     
-    if (message && currentRecipientId) {
-      // 1. Emitir al servidor
-      socket.emit('private message', {
-        fromUserId: userInfo.id,
-        toUserId: currentRecipientId,
-        message: message,
-      });
+    // Si el usuario llega a /chat a través del botón "Solicitar préstamo":
+    // 1. Simula la selección de la conversación con el ID global.
+    handleSelectConversation(recipientUserId, recipientUsername); 
+    
+    // 2. Limpia el estado global después de usarlo para evitar que el mismo chat 
+    //    se abra la próxima vez que se cargue la página sin usar el botón.
+    return () => {
+        clearChat(); 
+    };
 
-      // 2. Actualizar el estado local inmediatamente (sin esperar la respuesta del socket)
-      setConversations((prevConversations) => {
-        const newMessage = { fromUserId: userInfo.id, content: message, timestamp: new Date() }; // Usa content o message según lo que esperes
-        
-        return prevConversations.map((conv) =>
-          conv.userId === currentRecipientId
-            ? { ...conv, messages: [...conv.messages, newMessage] }
-            : conv
-        );
-      });
-      
-      setMessage('');
-    }
-  };
-
-  // Función de Selección de Conversación (Simplificada)
-  const handleSelectConversation = (userId) => {
-    const existingConversation = conversations.find(conv => conv.userId === userId);
-
-    if (existingConversation) {
-        // Establecer el ID de la conversación activa y el recipient
-        setActiveConversationId(userId);
-        setRecipient(userId);
-    } else {
-        // Lógica para crear un placeholder para una nueva conversación (si el usuario la busca)
-        const newRecipient = searchResults.find(user => user.id === userId);
-        const newConversation = {
-            userId: userId,
-            username: newRecipient?.username || 'Usuario Desconocido',
-            messages: []
-        };
-        
-        setConversations(prevConversations => [newConversation, ...prevConversations]);
-        setActiveConversationId(userId);
-        setRecipient(userId);
-        
-        // Limpiar resultados de búsqueda después de seleccionar
-        setSearchTerm('');
-        setSearchResults([]);
-    }
-  };
-
+  }, [recipientUserId]); // Ejecuta cuando el ID del destinatario global cambia
+  
   return (
   <div className={styles.chatLayout}>
     {/* Left Panel: Conversation List */}
@@ -222,17 +243,17 @@ function Chat({ recipientId }) {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {/* List search results or existing conversations */}
+      {/* Lista de los resultados de la búsqueda y de aquellos usuarios con los que ya había alguna conversación */}
       <ul>
         {searchResults.map((user) => (
-          <li key={user.id} onClick={() => handleSelectConversation(user.id)}>
+          <li key={user.id} onClick={() => handleSelectConversation(user.id, user.username)}>
             {user.username}
           </li>
         ))}
         {conversations.map((conv) => (
           <li
             key={conv.userId}
-            onClick={() => handleSelectConversation(conv.userId)}
+            onClick={() => handleSelectConversation(conv.userId, conv.username)}
             className={conv.userId === activeConversationId ? styles.active : ''}
           >
             {conv.username}
