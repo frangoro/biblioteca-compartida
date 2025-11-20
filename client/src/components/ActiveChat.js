@@ -13,7 +13,7 @@ const ActiveChat = ({ conversation, userInfo, sendMessage, message, setMessage }
 
   useEffect(() => {
     scrollToBottom();
-  }, [conversation.messages.length]); // Scroll cada vez que cambia el número de mensajes
+  }, [conversation?.messages.length]); // Scroll cada vez que cambia el número de mensajes
 
   if (!conversation) {
     return <div className={styles.emptyChat}>Selecciona una conversación para chatear.</div>;
