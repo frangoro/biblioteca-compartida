@@ -36,7 +36,7 @@ function UserFormPage() {
     // Determinar el ID del usuario a editar
     // Si hay un ID en la URL, es una edición de administrador.
     // Si no, es la edición del perfil del usuario actual.
-    const userIdToEdit = isCreatePage ? null : id || userInfo?._id;
+    const userIdToEdit = isCreatePage ? null : id || userInfo?.id;
     if (userIdToEdit) {
       setIsEditing(true);
       // Cargar datos del usuario para edición
