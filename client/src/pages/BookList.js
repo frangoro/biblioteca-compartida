@@ -7,6 +7,7 @@ import Buscador from '../components/Buscador';
 import SearchBar from '../components/SearchBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import styles from './BookList.module.css';
 
 const BookList = () => {
 
@@ -123,14 +124,7 @@ const BookList = () => {
       <main className="page-content">
         <div className="container">
           <div className="container mt-5">
-            <Buscador 
-                    setFiltro={setFiltro} 
-                    categorias={categorias} 
-                    setCategoriaSeleccionada={setCategoriaSeleccionada}
-                    categoriaSeleccionada={categoriaSeleccionada}
-                  />
-            <SearchBar onSearch={handleSearch} />
-            <Button variant="primary" onClick={() => setShowModal(true)}>Agregar</Button>
+            <SearchBar className={styles['searchBar']} onSearch={handleSearch} />
             <Table striped bordered hover className="mt-3">
               <thead>
                 <tr>
@@ -158,6 +152,7 @@ const BookList = () => {
                 ))}
               </tbody>
             </Table>
+            <Button className={styles['addButton']} variant="primary" onClick={() => setShowModal(true)}>Agregar nuevo libro</Button>
 
             <Modal show={showModal} onHide={() => setShowModal(false)}>
               <Modal.Header closeButton>
