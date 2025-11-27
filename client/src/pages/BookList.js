@@ -1,9 +1,7 @@
 /* Página que muestra la lista de libros del usuario actual */
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { deleteBook, addBook, updateBook, getBooksQuery } from '../services/bookService';
 import { Button, Table, Modal, Form } from "react-bootstrap";
-import Buscador from '../components/Buscador';
 import SearchBar from '../components/SearchBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -14,9 +12,6 @@ const BookList = () => {
   const [books, setBooks] = useState([]); // lista de libros que se muestran en la tabla
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" }); // campos del formulario de crear/editar libro
-  const [filtro, setFiltro] = useState('');
-  const categorias = [...new Set(books.map(item => item.category))];
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({ searchTerm: ''});
@@ -55,24 +50,16 @@ const BookList = () => {
     setShowModal(true);
   };
 
-
-
   const handleDelete = async (id) => {
     await deleteBook(id);
     fetchBooks();
   };
 
-  useEffect(() => {
-    fetchBooks();
-  }, []);
-
   const fetchBooks = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Construye la URL con parámetros de consulta
-      const queryParams = new URLSearchParams(filters).toString();
-      const response = await getBooksQuery(queryParams);
+      const response = await getBooksQuery(filters);
       setBooks(response.data);
     } catch (error) {
       console.error("Error al cargar los libros:", error);
