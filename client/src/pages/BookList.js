@@ -52,7 +52,7 @@ const BookList = () => {
 
   const handleDelete = async (id) => {
     await deleteBook(id);
-    fetchBooks();
+    setBooks(books.filter(item => item._id !== id));
   };
 
   const fetchBooks = useCallback(async () => {
