@@ -18,28 +18,20 @@ const BookList = () => {
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    let parsedValue;
-    if (value === "true") {
-      parsedValue = true;
-    } else if (value === "false") {
-      parsedValue = false;
-    } else {
-      parsedValue = value;
-    }
-    setFormData({ ...formData, [name]: parsedValue });
+    const finalValue = (value === 'true') ? true : (value === 'false') ? false : value;
+    setFormData({ ...formData, [name]: finalValue });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData._id) {
-      // Actualizar
-      updateBook(formData._id, formData);
-      setBooks(books.map(item => item._id === formData._id ? formData : item));
+      // Editar
+      const res = await updateBook(formData._id, formData); 
+      setBooks(books.map(item => item._id === formData._id ? res.data : item));
     } else {
       // Crear
       const res = await addBook(formData); // Crea y devuelve el libro creado
       setBooks([...books, res.data.newBook]); // Añade al listado el nuevo libro con los datos de la BBDD
-  
     }
     setShowModal(false);
     setFormData({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" });
