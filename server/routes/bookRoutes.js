@@ -8,10 +8,10 @@ const Book = require('../models/Book');
 // Importamos los middlewares para proteger las rutas
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// Búsqueda de libros
+// Búsqueda de libros por diferentes criterios (no por el id)
 router.get('/', async (req, res) => {
     try {
-        const { searchTerm} = req; // Obtener parámetros de consulta
+        const { searchTerm} = req.query; // Obtener parámetros de consulta
 
         let query = {}; // Objeto de consulta para MongoDB
 
