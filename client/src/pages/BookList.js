@@ -118,35 +118,42 @@ const BookList = () => {
         <div className="container">
           <div className="container mt-5">
             <SearchBar className={styles['searchBar']} onSearch={handleSearch} />
-            <Table striped bordered hover className="mt-3">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Autor</th>
-                  <th>Categoría</th>
-                  <th>Observaciones</th>
-                  <th>Disponibilidad</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredBooks.map(item => (
-                  <tr key={item._id}>
-                    <td>{item.title}</td>
-                    <td>{item.author}</td>
-                    <td>{item.category}</td>
-                    <td>{item.condition}</td>
-                    <td>{item.isAvailable ? 'Disponible' : 'No disponible'}</td>
-                    <td>
-                      <Button variant="warning" onClick={() => handleEdit(item)}>Editar</Button>
-                      <Button variant="danger" onClick={() => handleDelete(item._id)}>Eliminar</Button>
-                    </td>
+            {loading ? (
+                <p>Cargando libros...</p>
+            ) : error ? (
+                <p className="error-message">{error}</p>
+            ) : (
+              <>
+              <Table striped bordered hover className="mt-3">
+                <thead>
+                  <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Categoría</th>
+                    <th>Observaciones</th>
+                    <th>Disponibilidad</th>
+                    <th>Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-            <Button className={styles['addButton']} variant="primary" onClick={() => setShowModal(true)}>Agregar nuevo libro</Button>
-
+                </thead>
+                <tbody>
+                  {filteredBooks.map(item => (
+                    <tr key={item._id}>
+                      <td>{item.title}</td>
+                      <td>{item.author}</td>
+                      <td>{item.category}</td>
+                      <td>{item.condition}</td>
+                      <td>{item.isAvailable ? 'Disponible' : 'No disponible'}</td>
+                      <td>
+                        <Button variant="warning" onClick={() => handleEdit(item)}>Editar</Button>
+                        <Button variant="danger" onClick={() => handleDelete(item._id)}>Eliminar</Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+              <Button className={styles['addButton']} variant="primary" onClick={() => setShowModal(true)}>Agregar nuevo libro</Button>
+              </>
+            )}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
               <Modal.Header closeButton>
                 <Modal.Title>{formData._id ? "Editar" : "Agregar"}</Modal.Title>
