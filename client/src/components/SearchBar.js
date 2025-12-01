@@ -20,7 +20,6 @@ function SearchBar({ onSearch }) {
         value={searchTerm}
         onChange={handleInputChange}
         className={styles['search-input']}
-        
       />
   );
 }

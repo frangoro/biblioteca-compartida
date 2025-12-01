@@ -14,7 +14,7 @@ const BookList = () => {
   const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" }); // campos del formulario de crear/editar libro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ searchTerm: ''});
+  const [searchTerm, setSearchTerm] = useState('');
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,11 +47,12 @@ const BookList = () => {
     setBooks(books.filter(item => item._id !== id));
   };
 
+  // Carga todos los libros del usuario al principio
   const fetchBooks = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getBooksQuery(filters);
+      const response = await getBooksQuery({});
       setBooks(response.data);
     } catch (error) {
       console.error("Error al cargar los libros:", error);
@@ -59,15 +60,28 @@ const BookList = () => {
     } finally {
       setLoading(false);
     }
-  }, [filters]); // La función se re-crea solo si 'filters' cambia
+  }, []); 
 
   useEffect(() => {
     fetchBooks();
-  }, [fetchBooks]); // Dispara la carga cuando fetchBooks (y por lo tanto filters) cambie
+  }, [fetchBooks]);
 
+  // Maneja la búsqueda de libros
   const handleSearch = (newFilters) => {
-    setFilters(newFilters); // Actualiza los filtros, lo que disparará useEffect
+    setSearchTerm(newFilters.searchTerm);
   };
+
+  // Obtiene los libros filtrados según el término de búsqueda
+  const filteredBooks = books.filter(book => {
+    if (!searchTerm) {
+      return true; // Si no hay término, muestra todos
+    }
+    const term = searchTerm.toLowerCase();
+    
+    // Define tus campos de búsqueda (Título, Autor, etc.)
+    return book.title.toLowerCase().includes(term) || 
+          book.author.toLowerCase().includes(term);
+  });
 
     if (loading) {
     return (
@@ -116,7 +130,7 @@ const BookList = () => {
                 </tr>
               </thead>
               <tbody>
-                {books.map(item => (
+                {filteredBooks.map(item => (
                   <tr key={item._id}>
                     <td>{item.title}</td>
                     <td>{item.author}</td>

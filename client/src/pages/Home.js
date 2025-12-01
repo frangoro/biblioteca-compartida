@@ -44,6 +44,7 @@ function Home() {
   }, []);
 
   // Maneja la búsqueda de libros
+  // TODO: ELIMINAR
   const handleSearch = ({ searchTerm }) => {
     // Si el término de búsqueda está vacío, muestra todos los libros
     if (!searchTerm) {
