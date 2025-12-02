@@ -52,7 +52,7 @@ const BookList = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getBooksQuery({});
+      const response = await getBooksQuery({myBooks: 'true'});
       setBooks(response.data);
     } catch (error) {
       console.error("Error al cargar los libros:", error);

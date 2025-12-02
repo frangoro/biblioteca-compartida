@@ -9,6 +9,46 @@ const Book = require('../models/Book');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 // Búsqueda de libros por diferentes criterios (no por el id)
+// Sólo para usuarios authenticados
+router.get('/my', protect, async (req, res) => {
+    try {
+        // Obtener parámetros de consulta. 
+        // myBooks indica si se quieren solo los libros del usuario logueado
+        const { searchTerm, myBooks} = req.query; 
+        const userId = req.user.id;
+
+        let query = {}; // Objeto de consulta para MongoDB
+
+        if (myBooks === 'true' && userId) {
+            query.owner = userId;
+        }
+
+        // Criterio de búsqueda por título o descripción (case-insensitive)
+        if (searchTerm) {
+            const searchCondition = {
+                $or: [
+                    { title: { $regex: searchTerm, $options: 'i' } }, 
+                    { description: { $regex: searchTerm, $options: 'i' } }
+                ]
+            };
+            if (Object.keys(query).length > 0) {
+                query = { $and: [query, searchCondition] };
+            } else {
+                query = searchCondition;
+            }
+        }
+
+        // Ejecutar la consulta en la base de datos
+        const books = await Book.find(query).populate('owner', 'username email');
+        res.json(books);
+
+    } catch (error) {
+        console.error('Error al obtener libros:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+});
+
+// Ruta pública para la búsqueda de libros por diferentes criterios
 router.get('/', async (req, res) => {
     try {
         const { searchTerm} = req.query; // Obtener parámetros de consulta
@@ -26,8 +66,8 @@ router.get('/', async (req, res) => {
         // Ejecutar la consulta en la base de datos
         const books = await Book.find(query).populate('owner', 'username email');
         res.json(books);
-
-    } catch (error) {
+        
+    }catch (error) {
         console.error('Error al obtener libros:', error);
         res.status(500).json({ message: 'Error interno del servidor' });
     }
