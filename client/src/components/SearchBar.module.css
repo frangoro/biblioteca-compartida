@@ -12,7 +12,7 @@
   border-radius: 5px;
   font-size: 1em;
   flex: 1; /* Permite que el input crezca */
-  min-width: 200px; /* Ancho mínimo para los inputs */
+  min-width: 300px; /* Ancho mínimo para los inputs */
   width: 100%;
 }
 

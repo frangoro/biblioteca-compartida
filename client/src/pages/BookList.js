@@ -1,30 +1,35 @@
 /* Página que muestra la lista de libros del usuario actual */
 import React, { useCallback, useEffect, useState } from 'react';
 import { deleteBook, addBook, updateBook, getBooksQuery } from '../services/bookService';
-import { Button, Table, Modal, Form } from "react-bootstrap";
+import { Button, Table, Modal, Form, Dropdown } from "react-bootstrap";
 import SearchBar from '../components/SearchBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import CategoryFilter from '../components/CategoryFilter';
+import IconCategoryDropdown from '../components/IconCategoryDropdown';
+import { BiFilter } from 'react-icons/bi';
 import styles from './BookList.module.css';
-import { 
-  useReactTable, 
-  getCoreRowModel, 
-  getSortedRowModel, 
-  getFilteredRowModel, 
-  flexRender 
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender
 } from '@tanstack/react-table';
 
 const BookList = () => {
 
   const [books, setBooks] = useState([]); // lista de libros que se muestran en la tabla
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" }); // campos del formulario de crear/editar libro
+  const [formData, setFormData] = useState({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image: "" }); // campos del formulario de crear/editar libro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [globalFilter, setGlobalFilter] = useState(''); // Usaremos este para el SearchBar
+  const [columnFilters, setColumnFilters] = useState([]); // Filtro de la columna Disponibilidad
   const [sorting, setSorting] = useState([]); // Estado para manejar la ordenación
-  
+  const [showOnlyAvailable, setShowOnlyAvailable] = useState(false); // Estado para el botón toggle
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const finalValue = (value === 'true') ? true : (value === 'false') ? false : value;
@@ -35,7 +40,7 @@ const BookList = () => {
     e.preventDefault();
     if (formData._id) {
       // Editar
-      const res = await updateBook(formData._id, formData); 
+      const res = await updateBook(formData._id, formData);
       setBooks(books.map(item => item._id === formData._id ? res.data : item));
     } else {
       // Crear
@@ -43,7 +48,7 @@ const BookList = () => {
       setBooks([...books, res.data.newBook]); // Añade al listado el nuevo libro con los datos de la BBDD
     }
     setShowModal(false);
-    setFormData({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image:"" });
+    setFormData({ _id: "", title: "", author: "", category: "", condition: "", isAvailable: true, image: "" });
   };
 
   const handleEdit = (item) => {
@@ -61,7 +66,7 @@ const BookList = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getBooksQuery({myBooks: 'true'});
+      const response = await getBooksQuery({ myBooks: 'true' });
       setBooks(response.data);
     } catch (error) {
       console.error("Error al cargar los libros:", error);
@@ -69,7 +74,7 @@ const BookList = () => {
     } finally {
       setLoading(false);
     }
-  }, []); 
+  }, []);
 
   useEffect(() => {
     fetchBooks();
@@ -88,6 +93,7 @@ const BookList = () => {
     {
       accessorKey: 'category',
       header: 'Categoría',
+      filterFn: 'includesString',
     },
     {
       accessorKey: 'condition',
@@ -97,7 +103,7 @@ const BookList = () => {
       accessorKey: 'isAvailable',
       header: 'Disponibilidad',
       // Personalizamos la renderización para mostrar 'Disponible'/'No disponible' en lugar de true/false
-      cell: info => (info.getValue() ? 'Disponible' : 'No disponible')
+      cell: info => (info.getValue() ? 'Disponible' : 'No disponible'),
     },
     {
       id: 'actions', // ID para las acciones (no tiene accessorKey ya que no es un campo de datos)
@@ -119,20 +125,36 @@ const BookList = () => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(), // Habilita la ordenación
     getFilteredRowModel: getFilteredRowModel(), // Habilita el filtrado
-    
+
     // Gestión del estado de la tabla
     state: {
       sorting, // Usa el estado local de ordenación
       globalFilter, // Usa el estado local de filtro
+      columnFilters,
     },
     onSortingChange: setSorting, // Función para actualizar el estado de ordenación
     onGlobalFilterChange: setGlobalFilter, // Función para actualizar el estado del filtro
+    onColumnFiltersChange: setColumnFilters,
   });
 
   const handleSearch = (newFilters) => {
     // Asumimos que SearchBar devuelve un objeto con { searchTerm: 'valor' }
-    setGlobalFilter(newFilters.searchTerm); 
+    setGlobalFilter(newFilters.searchTerm);
   };
+
+  // Obtiene los valores únicos de la categoría para el filtro
+  const getUniqueCategoryValues = () => {
+    // Usamos Set para asegurar que los valores sean únicos
+    const categories = new Set(books.map(book => book.category).filter(Boolean)); // filter(Boolean) para ignorar valores nulos o vacíos
+    return Array.from(categories).sort();
+  };
+
+  const categoryColumn = table.getColumn('category');
+
+  const rowsToShow = table.getRowModel().rows;
+  const finalRows = showOnlyAvailable 
+    ? rowsToShow.filter(row => row.original.isAvailable === true) 
+    : rowsToShow;
 
   return (
     <div className="page-wrapper">
@@ -140,66 +162,83 @@ const BookList = () => {
       <main className="page-content">
         <div className="container">
           <div className="container mt-5">
-            <SearchBar className={styles['searchBar']} onSearch={handleSearch} />
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              {/* Controles de búsqueda y filtros por columna */}
+              <div className="d-flex align-items-center">
+                {/* SearchBar (Filtro Global) */}
+                <SearchBar className={styles['searchBar']} onSearch={handleSearch} />
+
+                {/* Filtro por Categoría */}
+                {categoryColumn && <IconCategoryDropdown column={categoryColumn} books={books} />}
+              </div>
+
+              {/* Botón para mostrar sólo disponibles o todos */}
+              <Button
+                variant={showOnlyAvailable ? "success" : "secondary"}
+                onClick={() => setShowOnlyAvailable(!showOnlyAvailable)}
+              >
+                {showOnlyAvailable ? "Mostrando Solo Disponibles" : "Mostrar Solo Disponibles"}
+              </Button>
+            </div>
             {loading ? (
-                <p>Cargando libros...</p>
+              <p>Cargando libros...</p>
             ) : error ? (
-                <p className="error-message">{error}</p>
+              <p className="error-message">{error}</p>
             ) : (
               <>
-              <Table striped bordered hover className="mt-3">
-              
-                <thead>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <th
-                          key={header.id}
-                          // Añade el handler de click para ordenar
-                          onClick={header.column.getToggleSortingHandler()} 
-                          // Muestra el puntero si la columna es ordenable
-                          style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
-                        >
-                          {/* Renderiza el contenido del encabezado */}
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {/* Muestra el icono de ordenación (⬆️/⬇️) */}
-                          {{
-                            asc: ' ⬆️',
-                            desc: ' ⬇️',
-                          }[header.column.getIsSorted()] ?? null}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                
-                {/* Tbody dinámico para Filas y Ordenación/Filtrado */}
-                <tbody>
-                  {/* table.getRowModel().rows solo contiene las filas filtradas y ordenadas */}
-                  {table.getRowModel().rows.length > 0 ? (
-                    table.getRowModel().rows.map(row => (
-                      <tr key={row.id}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>
-                            {/* Renderiza el contenido de la celda */}
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
+                <Table striped bordered hover className="mt-3">
+
+                  <thead>
+                    {table.getHeaderGroups().map(headerGroup => (
+                      <tr key={headerGroup.id}>
+                        {headerGroup.headers.map(header => (
+                          <th
+                            key={header.id}
+                            // Añade el handler de click para ordenar
+                            onClick={header.column.getToggleSortingHandler()}
+                            // Muestra el puntero si la columna es ordenable
+                            style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                          >
+                            {/* Renderiza el contenido del encabezado */}
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {/* Muestra el icono de ordenación (⬆️/⬇️) */}
+                            {{
+                              asc: ' ⬆️',
+                              desc: ' ⬇️',
+                            }[header.column.getIsSorted()] ?? null}
+                          </th>
                         ))}
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={columns.length} className="text-center">
-                        No se encontraron libros.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
-              <Button className={styles['addButton']} variant="primary" onClick={() => setShowModal(true)}>Agregar nuevo libro</Button>
+                    ))}
+                  </thead>
+
+                  {/* Tbody dinámico para Filas y Ordenación/Filtrado */}
+                  <tbody>
+                    {/* finalRows solo contiene las filas filtradas y ordenadas */}
+                    {finalRows.length > 0 ? (
+                      finalRows.map(row => (
+                        <tr key={row.id}>
+                          {row.getVisibleCells().map(cell => (
+                            <td key={cell.id}>
+                              {/* Renderiza el contenido de la celda */}
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={columns.length} className="text-center">
+                          No se encontraron libros.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+                <Button className={styles['addButton']} variant="primary" onClick={() => setShowModal(true)}>Agregar nuevo libro</Button>
               </>
             )}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
