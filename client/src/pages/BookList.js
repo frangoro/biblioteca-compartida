@@ -83,34 +83,6 @@ const BookList = () => {
           book.author.toLowerCase().includes(term);
   });
 
-    if (loading) {
-    return (
-      <div className="page-wrapper">
-        <Header />
-        <main className="page-content">
-          <div className="container">
-            <p>Cargando libros...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="page-wrapper">
-        <Header />
-        <main className="page-content">
-          <div className="container">
-            <p className="error-message">{error}</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
     <div className="page-wrapper">
       <Header />
