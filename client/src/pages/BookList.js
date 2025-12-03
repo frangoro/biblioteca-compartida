@@ -6,6 +6,13 @@ import SearchBar from '../components/SearchBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from './BookList.module.css';
+import { 
+  useReactTable, 
+  getCoreRowModel, 
+  getSortedRowModel, 
+  getFilteredRowModel, 
+  flexRender 
+} from '@tanstack/react-table';
 
 const BookList = () => {
 
@@ -15,6 +22,8 @@ const BookList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [globalFilter, setGlobalFilter] = useState(''); // Usaremos este para el SearchBar
+  const [sorting, setSorting] = useState([]); // Estado para manejar la ordenación
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,22 +75,64 @@ const BookList = () => {
     fetchBooks();
   }, [fetchBooks]);
 
-  // Maneja la búsqueda de libros
-  const handleSearch = (newFilters) => {
-    setSearchTerm(newFilters.searchTerm);
-  };
+  const columns = [
+    {
+      accessorKey: 'title',
+      header: 'Título',
+      cell: info => <div style={{ fontWeight: 'bold' }}>{info.getValue()}</div>
+    },
+    {
+      accessorKey: 'author',
+      header: 'Autor',
+    },
+    {
+      accessorKey: 'category',
+      header: 'Categoría',
+    },
+    {
+      accessorKey: 'condition',
+      header: 'Observaciones',
+    },
+    {
+      accessorKey: 'isAvailable',
+      header: 'Disponibilidad',
+      // Personalizamos la renderización para mostrar 'Disponible'/'No disponible' en lugar de true/false
+      cell: info => (info.getValue() ? 'Disponible' : 'No disponible')
+    },
+    {
+      id: 'actions', // ID para las acciones (no tiene accessorKey ya que no es un campo de datos)
+      header: 'Acciones',
+      enableSorting: false, // Desactiva la ordenación en la columna de botones
+      cell: ({ row }) => (
+        <>
+          <Button variant="warning" onClick={() => handleEdit(row.original)}>Editar</Button>
+          <Button variant="danger" onClick={() => handleDelete(row.original._id)} className="ms-2">Eliminar</Button>
+        </>
+      ),
+    },
+  ];
 
-  // Obtiene los libros filtrados según el término de búsqueda
-  const filteredBooks = books.filter(book => {
-    if (!searchTerm) {
-      return true; // Si no hay término, muestra todos
-    }
-    const term = searchTerm.toLowerCase();
+  const table = useReactTable({
+    data: books, // Tus datos
+    columns, // La definición de columnas
+    // Plugins necesarios
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(), // Habilita la ordenación
+    getFilteredRowModel: getFilteredRowModel(), // Habilita el filtrado
     
-    // Define tus campos de búsqueda (Título, Autor, etc.)
-    return book.title.toLowerCase().includes(term) || 
-          book.author.toLowerCase().includes(term);
+    // Gestión del estado de la tabla
+    state: {
+      sorting, // Usa el estado local de ordenación
+      globalFilter, // Usa el estado local de filtro
+    },
+    onSortingChange: setSorting, // Función para actualizar el estado de ordenación
+    onGlobalFilterChange: setGlobalFilter, // Función para actualizar el estado del filtro
   });
+
+  const handleSearch = (newFilters) => {
+    // Asumimos que SearchBar devuelve un objeto con { searchTerm: 'valor' }
+    setGlobalFilter(newFilters.searchTerm); 
+  };
 
   return (
     <div className="page-wrapper">
@@ -97,30 +148,55 @@ const BookList = () => {
             ) : (
               <>
               <Table striped bordered hover className="mt-3">
+              
                 <thead>
-                  <tr>
-                    <th>Título</th>
-                    <th>Autor</th>
-                    <th>Categoría</th>
-                    <th>Observaciones</th>
-                    <th>Disponibilidad</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredBooks.map(item => (
-                    <tr key={item._id}>
-                      <td>{item.title}</td>
-                      <td>{item.author}</td>
-                      <td>{item.category}</td>
-                      <td>{item.condition}</td>
-                      <td>{item.isAvailable ? 'Disponible' : 'No disponible'}</td>
-                      <td>
-                        <Button variant="warning" onClick={() => handleEdit(item)}>Editar</Button>
-                        <Button variant="danger" onClick={() => handleDelete(item._id)}>Eliminar</Button>
-                      </td>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map(header => (
+                        <th
+                          key={header.id}
+                          // Añade el handler de click para ordenar
+                          onClick={header.column.getToggleSortingHandler()} 
+                          // Muestra el puntero si la columna es ordenable
+                          style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                        >
+                          {/* Renderiza el contenido del encabezado */}
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {/* Muestra el icono de ordenación (⬆️/⬇️) */}
+                          {{
+                            asc: ' ⬆️',
+                            desc: ' ⬇️',
+                          }[header.column.getIsSorted()] ?? null}
+                        </th>
+                      ))}
                     </tr>
                   ))}
+                </thead>
+                
+                {/* Tbody dinámico para Filas y Ordenación/Filtrado */}
+                <tbody>
+                  {/* table.getRowModel().rows solo contiene las filas filtradas y ordenadas */}
+                  {table.getRowModel().rows.length > 0 ? (
+                    table.getRowModel().rows.map(row => (
+                      <tr key={row.id}>
+                        {row.getVisibleCells().map(cell => (
+                          <td key={cell.id}>
+                            {/* Renderiza el contenido de la celda */}
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={columns.length} className="text-center">
+                        No se encontraron libros.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </Table>
               <Button className={styles['addButton']} variant="primary" onClick={() => setShowModal(true)}>Agregar nuevo libro</Button>
