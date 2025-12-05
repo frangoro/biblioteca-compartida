@@ -40,8 +40,9 @@ const BookList = () => {
     e.preventDefault();
     if (formData._id) {
       // Editar
+      formData.owner = formData.owner && formData.owner.id ? formData.owner.id: formData.owner; // Sólo necesitamos el ID del owner
       const res = await updateBook(formData._id, formData);
-      setBooks(books.map(item => item._id === formData._id ? res.data : item));
+      setBooks(books.map(item => item._id === formData._id ? res.data.book : item));
     } else {
       // Crear
       const res = await addBook(formData); // Crea y devuelve el libro creado
