@@ -5,8 +5,11 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
+const bookController = require('../controllers/bookController.js');
 // Importamos los middlewares para proteger las rutas
 const { protect, admin } = require('../middleware/authMiddleware');
+
+router.get('/search', bookController.getBooksWithSearchAndPagination);
 
 // Búsqueda de libros por diferentes criterios (no por el id)
 // Sólo para usuarios authenticados

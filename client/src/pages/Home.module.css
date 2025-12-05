@@ -11,3 +11,122 @@
   font-weight: bold;
   margin-top: 20px;
 }
+
+/* --- Estilos del formulario de búsqueda --- */
+
+.search-form {
+  display: flex;
+  gap: 10px; /* Espacio uniforme entre elementos */
+  align-items: center; /* Centrar verticalmente los elementos */
+  margin-bottom: 30px; /* Separación de la lista de libros */
+  padding: 15px;
+  background-color: #f8f8f8; /* Fondo sutil para destacar el área de búsqueda */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Sombra ligera */
+  flex-wrap: wrap; /* Para que los elementos se apilen en pantallas pequeñas */
+}
+
+.search-input {
+  flex-grow: 1; /* El input de texto ocupa el espacio disponible */
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-input:focus {
+  border-color: #007bff; /* Color primario al enfocarse */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  outline: none; /* Elimina el outline por defecto del navegador */
+}
+
+.search-select {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: white;
+  /* Eliminar la apariencia por defecto en algunos navegadores */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); /* Flecha SVG custom */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 35px; /* Espacio para la flecha custom */
+}
+
+.search-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #28a745; /* Color primario verde (éxito/acción) */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
+
+.search-button:hover {
+  background-color: #218838; /* Tono más oscuro al pasar el ratón */
+}
+
+.search-button:active {
+  transform: scale(0.98); /* Pequeño efecto de clic */
+}
+
+/* --- Estilos de Paginación --- */
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+  gap: 15px;
+}
+
+.pagination-button {
+  padding: 10px 20px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  background-color: white;
+  color: #007bff;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 16px;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination-button:disabled {
+  border-color: #ccc;
+  color: #ccc;
+  cursor: not-allowed;
+  background-color: #f0f0f0;
+}
+
+.pagination-info {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* --- Media Queries para Responsividad (Opcional, pero recomendado) --- */
+@media (max-width: 600px) {
+  .search-form {
+    flex-direction: column; /* Apilar elementos en móviles */
+  }
+
+  .search-input,
+  .search-select,
+  .search-button {
+    width: 100%; /* Ocupar todo el ancho disponible */
+    margin-bottom: 5px; /* Pequeña separación al apilar */
+  }
+}
