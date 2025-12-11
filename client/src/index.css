@@ -30,6 +30,13 @@ body {
 
 /* Main Content Styles */
 
+/* Contenedor Raíz (El que envuelve a Header, Main y Footer) */
+.page-wrapper {
+  display: flex;             /* Habilitar Flexbox */
+  flex-direction: column;    /* Alinear ítems verticalmente */
+  min-height: 100vh;         /* Asegurar que ocupe al menos el 100% de la altura del viewport */
+}
+
 /* Contenido entre la cabecera y el pie */
 .page-content {
   flex-grow: 1; /* Allows content to take up available space */
