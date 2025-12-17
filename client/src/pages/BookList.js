@@ -287,7 +287,7 @@ const BookList = () => {
                     />
                   </Form.Group>
                   <Form.Group>
-                    <Form.Label>Imagen</Form.Label>
+                    <Form.Label>Imagen URL (Puedes buscarla en Internet y copiar la dirección) </Form.Label>
                     <Form.Control
                       type="text"
                       name="image"
