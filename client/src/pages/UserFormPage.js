@@ -127,7 +127,7 @@ function UserFormPage() {
       
       <form onSubmit={(e) => handleSubmit(e, id || userInfo._id)}>
         <div className="mb-3">
-          <label htmlFor="username" className="form-label">Nombre:</label>
+          <label htmlFor="username" className="form-label">Nombre de usuario:</label>
           <input
             type="text"
             id="username"

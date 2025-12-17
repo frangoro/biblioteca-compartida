@@ -40,7 +40,7 @@
     font-size: 16px;
 }
 
-.form-container button {
+.form-container button[type="submit"] {
     width: 100%;
     padding: 12px;
     border: none;
@@ -51,13 +51,14 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s;
+    margin-top: 10px; /* Un poco de aire arriba */
 }
 
-.form-container button:hover {
+.form-container button[type="submit"]:hover {
     background-color: #0056b3;
 }
 
-.form-container button:disabled {
+.form-container button[type="submit"]:disabled {
     background-color: #a0cffa;
     cursor: not-allowed;
 }
@@ -90,4 +91,42 @@
     border-radius: 4px;
     margin-bottom: 20px;
     text-align: center;
+}
+
+/* Contenedor relativo para posicionar el ojo */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* El input debe tener un poco de padding extra a la derecha para que el texto no tape el ojo */
+.password-wrapper input {
+    width: 100%;
+    padding-right: 45px !important; 
+}
+
+/* Estilos específicos para el botón del ojo */
+.toggle-password {
+    position: absolute;
+    right: 5px; /* Ajustado para que quede dentro del borde */
+    top: 50%;
+    transform: translateY(-50%); /* Centrado vertical exacto */
+    background: transparent !important; /* Forzamos quitar el fondo azul */
+    border: none !important;
+    box-shadow: none !important;
+    width: auto !important; /* Evitamos que ocupe el 100% */
+    padding: 8px !important;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    z-index: 2; /* Aseguramos que esté por encima del input */
+}
+
+.toggle-password:hover {
+    color: #333;
+    background: transparent !important;
 }

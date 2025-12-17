@@ -10,6 +10,7 @@ const RegisterPage = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -30,11 +31,16 @@ const RegisterPage = () => {
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
     return (
         <div className={styles['form-container']}>
             <form onSubmit={handleSubmit}>
                 <h2>Crear una Cuenta</h2>
                 {error && <p className={styles['error-message']}>{error}</p>}
+                
                 <div className={styles['form-group']}>
                     <label htmlFor="username">Nombre de Usuario</label>
                     <input
@@ -45,6 +51,7 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
+
                 <div className={styles['form-group']}>
                     <label htmlFor="email">Email</label>
                     <input
@@ -55,20 +62,33 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
+
                 <div className={styles['form-group']}>
                     <label htmlFor="password">Contraseña</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        minLength="6"
-                    />
+                    <div className={styles['password-wrapper']}>
+                        <input
+                            type={showPassword ? 'text' : 'password'} 
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            minLength="6"
+                        />
+                        <button
+                            type="button"
+                            className={styles['toggle-password']}
+                            onClick={togglePasswordVisibility}
+                            aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        >
+                            {showPassword ? '🙈' : '👁️'}
+                        </button>
+                    </div>
                 </div>
+
                 <button type="submit" disabled={loading}>
                     {loading ? 'Registrando...' : 'Registrarse'}
                 </button>
+                
                 <div className={styles['form-link']}>
                     ¿Ya tienes una cuenta? <Link to="/login">Inicia Sesión</Link>
                 </div>
