@@ -42,7 +42,7 @@ const UserListPage = () => {
             try {
                 await userService.deleteUser(userId); // Llama a la función de tu servicio
                 // Refresca la lista de usuarios filtrando el eliminado
-                setUsers(users.filter(user => user._id !== userId));
+                setUsers(users.filter(user => user.id !== userId));
                 alert('Usuario eliminado con éxito.');
             } catch (err) {
                 setError(err.response?.data?.message || err.message || 'Error al eliminar el usuario');
@@ -109,18 +109,18 @@ const UserListPage = () => {
                 <tbody>
                     {filteredUsers.length > 0 ? (
                         filteredUsers.map(user => (
-                            <tr key={user._id}>
-                                <td>{user._id}</td>
+                            <tr key={user.id}>
+                                <td>{user.id}</td>
                                 <td>{user.username}</td>
                                 <td>{user.email}</td>
                                 <td>{user.role === 'admin' ? 'Sí' : 'No'}</td>
                                 {/* Columna de acciones */}
                                 <td>
                                     {/* Botones de acción con clases de Bootstrap */}
-                                    <button onClick={() => handleEditClick(user._id)} className="btn btn-warning btn-sm me-2">
+                                    <button onClick={() => handleEditClick(user.id)} className="btn btn-warning btn-sm me-2">
                                         Editar
                                     </button>
-                                    <button onClick={() => handleDelete(user._id)} className="btn btn-danger btn-sm">
+                                    <button onClick={() => handleDelete(user.id)} className="btn btn-danger btn-sm">
                                         Eliminar
                                     </button>
                                 </td>

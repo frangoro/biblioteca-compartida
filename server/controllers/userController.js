@@ -157,8 +157,19 @@ exports.updateUser = async (req, res) => {
             }
             user.password = password;
         }
-        user.role = role;
-        user.profilePicUrl = profilePicUrl;
+
+        // Solo un admin puede cambiar roles
+        if (role && role !== user.role) {
+            if (loggedInUserRole === 'admin') {
+                user.role = role;
+            } else {
+                // Si no es admin, ignoramos el cambio de rol o lanzamos error
+                // Para ser silenciosos y no dar pistas: simplemente no lo asignamos.
+            }
+        }
+
+        // Otros campos
+        if (profilePicUrl) user.profilePicUrl = profilePicUrl;
 
         const updatedUser = await user.save();
 
@@ -175,7 +186,7 @@ exports.updateUser = async (req, res) => {
         if (error.name === 'ValidationError') {
             return res.status(400).json({ message: error.message });
         }
-        res.status(500).send('Error del servidor');
+        res.status(500).send('Error en updateUser');
     }
 };
 

@@ -31,7 +31,7 @@ function Navigation() {
             <li><Link to="/myBooks">Mis libros</Link></li>
             <li><Link to="/loans">Mis préstamos</Link></li>
             <li><Link to="/chat" onClick={handleClick} >Chat</Link></li>
-            <li><Link to={"/profile"}>Mi usuario</Link></li>
+            <li><Link to={`/profile/${userInfo.id}`}>Mi usuario</Link></li>
             {/* Mostramos el enlace de admin solo si el usuario tiene ese rol */}
             {userInfo.role === 'admin' && (
               <li><Link to="/admin/userlist">Administrar Usuarios</Link></li>

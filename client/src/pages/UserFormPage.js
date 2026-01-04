@@ -25,7 +25,7 @@ function UserFormPage() {
 
   // Lógica para determinar si un administrador está editando
   // o si es el propio usuario editando su perfil
-  const isSelfEditing = userInfo && id === userInfo._id;
+  const isSelfEditing = userInfo && String(id) === String(userInfo.id);
   const isAdminEditing = userInfo && userInfo.role === 'admin' && id;
 
   const location = useLocation();
@@ -88,7 +88,7 @@ function UserFormPage() {
     e.preventDefault();
     setError(null);
 
-    const userIdToUpdate = id || userInfo?._id; // Usamos el ID correcto para la llamada a la API
+    const userIdToUpdate = id || userInfo?.id; // Usamos el ID correcto para la llamada a la API
 
     // Valida que el email es un email válido (si no tienes una librería de validación)
     if (formData.email && !/.+@.+\..+/.test(formData.email)) {
@@ -125,7 +125,7 @@ function UserFormPage() {
       
       {error && <div className="alert alert-danger" role="alert">{error}</div>}
       
-      <form onSubmit={(e) => handleSubmit(e, id || userInfo._id)}>
+      <form onSubmit={(e) => handleSubmit(e, id || userInfo.id)}>
         <div className="mb-3">
           <label htmlFor="username" className="form-label">Nombre de usuario:</label>
           <input

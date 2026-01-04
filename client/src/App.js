@@ -34,7 +34,7 @@ const App = () => {
           <Route path="/admin/users/:id/edit" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
         </Route>
         {/* Ruta para el usuario actual - NO usa un ID en la URL */}
-        <Route path="/profile" element={
+        <Route path="/profile/:id" element={
           <ProtectedRoute> {/* Protege la ruta para que solo los usuarios logueados puedan acceder */}
             <UserFormPage />
           </ProtectedRoute>

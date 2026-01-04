@@ -23,7 +23,7 @@ function UserWidget() {
           ) : ( // Si no tiene URL de foto de perfil, usa el icono de Font Awesome
             <FontAwesomeIcon icon="user-circle" className="profile-icon" /> // Usa el nombre del icono
           )}
-          <Link to="/profile"><span className="user-name">Hola, {userInfo?.username || 'Usuario'}</span></Link>
+          <Link to={`/profile/${userInfo.id}`}><span className="user-name">Hola, {userInfo?.username || 'Usuario'}</span></Link>
           <button onClick={logout} className="logout-button">Cerrar Sesión</button>
         </div>
       ) : (
