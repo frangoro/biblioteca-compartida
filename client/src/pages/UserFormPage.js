@@ -192,7 +192,7 @@ function UserFormPage() {
           <button type="submit" className="btn btn-primary">
             {isEditing ? 'Actualizar Usuario' : 'Crear Usuario'}
           </button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/admin/userlist')}>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate(-1)}>
             Cancelar
           </button>
         </div>
