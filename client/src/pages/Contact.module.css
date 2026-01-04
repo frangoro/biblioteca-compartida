@@ -1,0 +1,18 @@
+.formContainer {
+  transition: all 0.3s ease;
+}
+
+.btnSubmit {
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.btnSubmit:hover:not(:disabled) {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+
+.btnSubmit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

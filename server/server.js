@@ -52,6 +52,12 @@ app.use('/api/upload', uploadRoutes);
 const conversationsRoutes = require('./routes/conversationRoutes');
 app.use('/api/conversations', conversationsRoutes);
 
+// Ruta para el formulario de contacto
+const contactRoutes = require('./routes/contactRoutes');
+app.use('/api/contact', contactRoutes);
+
+/* Conexión a la base de datos */
+
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
