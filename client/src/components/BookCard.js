@@ -27,7 +27,6 @@ function BookCard({ book }) {
       <div className={styles["book-card-content"]}>
         <h3 className={styles["book-card-title"]}>{title}</h3>
         <p className={styles["book-card-author"]}>Autor: {author}</p>
-        <p className={styles["book-card-description"]}>{description}</p>
         <button 
           onClick={handleViewDetails} 
           className={styles["book-card-button"]}

@@ -8,6 +8,8 @@
   flex-direction: column;
   background-color: #fff;
   height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+  justify-content: space-around;
+  flex-grow: 1;
 }
 
 .book-card:hover {
@@ -18,14 +20,14 @@
 .book-card-image {
   width: 100%;
   height: 200px; /* Altura fija para las imágenes */
-  object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+  object-fit: contain; /* Que aparezca la imagen completa */
   border-bottom: 1px solid #eee;
 }
 
 .book-card-content {
   padding: 15px;
-  flex-grow: 1; /* Permite que el contenido ocupe el espacio restante */
-  display: flex;
+  /* flex-grow: 1;*/ /* Permite que el contenido ocupe el espacio restante */
+  display: flex;  
   flex-direction: column;
 }
 
