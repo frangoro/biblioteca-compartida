@@ -70,7 +70,7 @@ const users = [
     _id: new mongoose.Types.ObjectId('66301a1f4d4b4a001a234b10'),
     username: "admin",
     email: "frangoro@gmail.com",
-    password: "chnageme",
+    password: "$2b$10$RX7/XEAQt8pRlfk48JiX7OfmsvtYSNr.r7pCNIAtkml9lAj3EaNGi",
     role: 'admin'
 },
 {
