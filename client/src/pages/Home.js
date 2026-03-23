@@ -138,7 +138,7 @@ function Home() {
 
           {/* 9. Mostrar resultados */}
           <div className={styles['book-cards-grid']}>
-            {books.length > 0 ? (
+            {books && books.length > 0 ? (
               books.map(book => (
                 <BookCard key={book._id} book={book} />
               ))
