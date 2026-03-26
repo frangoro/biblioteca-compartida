@@ -7,7 +7,7 @@ import axios from 'axios';
 // Create a custom Axios instance
 const axiosInstance = axios.create({
   // URL de base para todas las peticiones a la API. Está configurada en el proxy en package.json
-  // baseURL: 'http://localhost:5000/api'
+  baseURL: process.env.REACT_APP_SERVER_URL
 });
 
 // Add a request interceptor
