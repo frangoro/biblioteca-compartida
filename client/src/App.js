@@ -16,6 +16,8 @@ import UserFormPage from './pages/UserFormPage';
 import ChatPage from './pages/ChatPage';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import PrivacyPolicy from './components/legal/PrivacyPolicy';
+import TermsOfService from './components/legal/TermsOfService';
 
 // Las rutas envueltas por el componente ProtectedRoute no pueden ser accedidas directamente sin autenticarse. 
 const App = () => {
@@ -32,6 +34,8 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         <Route path='' element={<AdminRoute />}>
           <Route path='/admin/userlist' element={<ProtectedRoute><UserListPage /></ProtectedRoute>} />
           <Route path="/admin/users/create" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
