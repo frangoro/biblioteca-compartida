@@ -101,7 +101,7 @@ router.get('/:id', protect, async (req, res) => {
 router.post('/add', protect, async (req, res) => {
     try {
         const { title, author, category, condition, owner, image, isAvailable} = req.body;
-        const book = new Book({ title, author, category, condition, owner, image, isAvailable });
+        const book = new Book({ title, author, category, condition, owner: req.user.id, image, isAvailable });
         const newBook = await book.save();
         res.json({ message: 'Libro registrado', newBook: newBook});
     } catch (error) {
